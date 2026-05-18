@@ -19,12 +19,20 @@ dependencies = [
 export = [
     "ultralytics>=8.0",
 ]
+ingest = [
+    "boto3>=1.34",
+    "requests>=2.31",
+]
 dev = [
     "pytest>=8.0",
+    "boto3>=1.34",
+    "requests>=2.31",
+    "moto[s3]>=5.0",
 ]
 
 [project.scripts]
 litter-detector-baseline = "litter_detector_baseline.__main__:main"
+litter-detector-ingest = "litter_detector_baseline.ingest.__main__:main"
 
 [tool.setuptools.package-dir]
 "" = "src"
