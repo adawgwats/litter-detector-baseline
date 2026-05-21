@@ -25,12 +25,20 @@ these. Each source has its own ingestion module here.
 
 | Source | Module | Status |
 |---|---|---|
-| OpenLitterMap | `openlittermap.py` | ✅ Implemented (this commit) |
+| OpenLitterMap (public endpoints) | `openlittermap.py` | ✅ Implemented |
+| OpenLitterMap (session-cookie auth) | `olm_auth.py` | ✅ Implemented — see `olm-auth-howto.md` |
 | TACO | `taco.py` | ⏳ Not yet — see issue #2 |
 | pLitter | `plitter.py` | ⏳ Not yet — see issue #2 |
 | KABML | `kabml.py` | ⏳ Not yet — see issue #2 |
 | ShitSpotter | `shitspotter.py` | ⏳ Not yet — see issue #2 |
 | Hard negatives | `hard_negatives.py` | ⏳ Not yet — see issue #2 |
+
+## Related docs
+
+- `contributor_assist_goal.md` — what the V1 model does and why. Read this first.
+- `training_quickstart.md` — concrete steps from "infra provisioned" to "first trained checkpoint."
+- `olm-auth-howto.md` — operational guide for the OLM bot account credentials + session-cookie flow.
+- `source_distillation_strategy_for_trash_models.md` — teacher/student distillation plan (longer-horizon).
 
 ## Setup
 
