@@ -1,0 +1,89 @@
+# Label crosswalk: source-dataset labels -> OLM leaf taxonomy.
+#
+# Format
+#   - 3 columns: source_dataset, source_label, olm_leaf_label
+#   - olm_leaf_label uses dotted form `<category>.<object>` matching the
+#     OLM /api/tags/all schema (category x object). See
+#     configs/taxonomies/olm_leaves.json for the authoritative leaf list.
+#   - Lines starting with '#' and blank lines are ignored by the loader.
+#   - One row per (source_dataset, source_label). The pair is unique.
+#
+# Ambiguity policy
+#   When a source label could map to multiple OLM leaves (e.g. TACO "Glass
+#   bottle" -> alcohol.bottle vs softdrinks.bottle), the crosswalk picks the
+#   empirically-dominant case from OLM contributor data:
+#     - glass bottles  -> alcohol.bottle      (glass dominates alcohol)
+#     - plastic bottles -> softdrinks.bottle  (plastic dominates softdrinks)
+#     - metal bottle caps -> alcohol.bottle_cap (paired with glass)
+#     - plastic bottle caps -> softdrinks.bottle_cap (paired with plastic)
+#     - drink cans -> softdrinks.can           (softdrinks more common in litter)
+#     - paper/foam cups -> coffee.cup          (coffee cups dominate this form)
+#   The user edits incorrect suggestions per the contributor-assist flow;
+#   defaults minimize median edit count, not maximize per-case accuracy.
+#
+source_dataset,source_label,olm_leaf_label
+#
+# === TACO (60 classes) ===
+# Source: https://github.com/pedropro/TACO  (CC-BY-4.0)
+# Snapshot: configs/taxonomies/taco_categories.json
+#
+taco,Aluminium foil,food.tinfoil
+taco,Battery,electronics.battery
+taco,Aluminium blister pack,medical.pill_pack
+taco,Carded blister pack,medical.pill_pack
+taco,Other plastic bottle,softdrinks.bottle
+taco,Clear plastic bottle,softdrinks.bottle
+taco,Glass bottle,alcohol.bottle
+taco,Plastic bottle cap,softdrinks.bottle_cap
+taco,Metal bottle cap,alcohol.bottle_cap
+taco,Broken glass,alcohol.broken_glass
+taco,Food Can,food.can
+taco,Aerosol,sanitary.deodorant_can
+taco,Drink can,softdrinks.can
+taco,Toilet tube,other.paper
+taco,Other carton,food.box
+taco,Egg carton,food.box
+taco,Drink carton,softdrinks.carton
+taco,Corrugated carton,food.box
+taco,Meal carton,food.takeaway_container
+taco,Pizza box,food.pizza_box
+taco,Paper cup,coffee.cup
+taco,Disposable plastic cup,softdrinks.cup
+taco,Foam cup,coffee.cup
+taco,Glass cup,alcohol.glass
+taco,Other plastic cup,softdrinks.cup
+taco,Food waste,food.other
+taco,Glass jar,food.jar
+taco,Plastic lid,softdrinks.lid
+taco,Metal lid,food.lid
+taco,Other plastic,other.plastic
+taco,Magazine paper,other.paper
+taco,Tissues,sanitary.tissue
+taco,Wrapping paper,other.paper
+taco,Normal paper,other.paper
+taco,Paper bag,food.bag
+taco,Plastified paper bag,food.bag
+taco,Plastic film,other.plastic
+taco,Six pack rings,alcohol.six_pack_rings
+taco,Garbage bag,other.bags_litter
+taco,Other plastic wrapper,food.wrapper
+taco,Single-use carrier bag,other.plastic_bag
+taco,Polypropylene bag,other.plastic_bag
+taco,Crisp packet,food.crisp_packet
+taco,Spread tub,food.container
+taco,Tupperware,food.container
+taco,Disposable food container,food.takeaway_container
+taco,Foam food container,food.takeaway_container
+taco,Other plastic container,food.container
+taco,Plastic glooves,medical.gloves
+taco,Plastic utensils,food.cutlery
+taco,Pop tab,softdrinks.pull_ring
+taco,Rope & strings,marine.rope
+taco,Scrap metal,other.metal
+taco,Shoe,other.clothing
+taco,Squeezable tube,sanitary.toothpaste_tube
+taco,Plastic straw,softdrinks.straw
+taco,Paper straw,softdrinks.straw
+taco,Styrofoam piece,marine.polystyrene_fragment
+taco,Unlabeled litter,other.other
+taco,Cigarette,smoking.butts

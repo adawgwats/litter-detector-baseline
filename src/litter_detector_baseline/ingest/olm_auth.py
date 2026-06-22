@@ -45,9 +45,11 @@ from __future__ import annotations
 import json
 import logging
 import os
+import pickle
 import threading
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 from urllib.parse import unquote
 
@@ -61,6 +63,11 @@ SECRET_ID_DEFAULT = "dregsbane/olm/ingest-bot"
 # Laravel default session lifetime is 120 minutes idle. Re-login proactively
 # after this to avoid an in-flight 419/401.
 SESSION_REFRESH_SEC = 90 * 60  # 90 minutes — conservative
+
+# Persist session cookies across script runs. OLM throttles /api/auth/login
+# aggressively (we got a 429 after ~3 logins in one hour). Caching cookies
+# keeps us at ≤ 1 login per ~90 minutes, well inside any reasonable throttle.
+DEFAULT_COOKIE_CACHE = Path.home() / ".cache" / "litter-detector-baseline" / "olm-session.pickle"
 
 
 @dataclass(frozen=True)
@@ -157,19 +164,81 @@ class OlmSession:
         *,
         user_agent: str = "litter-detector-baseline/0.1 (+olm-ingest-bot)",
         base_url: str = OLM_BASE,
+        cookie_cache_path: Optional[Path] = DEFAULT_COOKIE_CACHE,
     ) -> None:
         self._creds = credentials
         self._base = base_url.rstrip("/")
         self._session: Optional[requests.Session] = None
-        self._login_lock = threading.Lock()
+        # RLock so request() can hold the lock while transitively calling
+        # _login() (same thread re-acquires; non-reentrant Lock would
+        # deadlock here — observed 2026-05-23 after the 90-min refresh
+        # boundary stalled all workers).
+        self._login_lock = threading.RLock()
         self._user_agent = user_agent
         self._login_ts: float = 0.0
+        # Set cookie_cache_path=None to disable caching (e.g. in tests).
+        self._cookie_cache_path = cookie_cache_path
 
     # ─── context manager ────────────────────────────────────────────────
 
     def __enter__(self) -> "OlmSession":
-        self._login()
+        if not self._try_load_cached():
+            self._login()
         return self
+
+    # ─── cookie cache (avoid hammering /api/auth/login) ─────────────────
+
+    def _try_load_cached(self) -> bool:
+        """Try to restore a session from the on-disk cookie cache.
+
+        Returns True on success (session restored AND fresh enough). On any
+        failure — file missing, corrupt, expired — returns False and the
+        caller falls back to _login().
+        """
+        if self._cookie_cache_path is None or not self._cookie_cache_path.exists():
+            return False
+        try:
+            with self._cookie_cache_path.open("rb") as fh:
+                blob = pickle.load(fh)
+            login_ts = float(blob["login_ts"])
+            identifier = blob.get("identifier")
+            cookies = blob["cookies"]
+        except Exception as exc:
+            log.warning("OLM cookie cache unreadable (%s); will re-login", exc)
+            return False
+        # Treat as expired if the cached session belongs to a different
+        # identifier than the current creds, or if it's past our refresh window.
+        if identifier and identifier != self._creds.identifier:
+            log.info("OLM cookie cache identifier mismatch; re-login")
+            return False
+        if (time.time() - login_ts) > SESSION_REFRESH_SEC:
+            log.info("OLM cookie cache is older than %ds; re-login", SESSION_REFRESH_SEC)
+            return False
+        s = requests.Session()
+        s.headers["User-Agent"] = self._user_agent
+        s.cookies.update(cookies)
+        self._session = s
+        self._login_ts = login_ts
+        log.info("OLM session restored from cache (age=%.0fs)", time.time() - login_ts)
+        return True
+
+    def _persist_cookies(self) -> None:
+        if self._cookie_cache_path is None or self._session is None:
+            return
+        try:
+            self._cookie_cache_path.parent.mkdir(parents=True, exist_ok=True)
+            blob = {
+                "login_ts": self._login_ts,
+                "identifier": self._creds.identifier,
+                "cookies": dict(self._session.cookies),
+            }
+            # Write atomically: write to a temp sibling, then rename.
+            tmp = self._cookie_cache_path.with_suffix(".pickle.tmp")
+            with tmp.open("wb") as fh:
+                pickle.dump(blob, fh)
+            tmp.replace(self._cookie_cache_path)
+        except Exception as exc:
+            log.warning("OLM cookie cache write failed: %s", exc)
 
     def __exit__(self, exc_type, exc, tb) -> None:
         if self._session is not None:
@@ -220,42 +289,64 @@ class OlmSession:
             self._session = s
             self._login_ts = time.time()
             log.info("OLM login OK as %s", self._creds.identifier)
+            self._persist_cookies()
 
     def _extract_xsrf(self, s: requests.Session) -> Optional[str]:
-        cookie = s.cookies.get("XSRF-TOKEN")
-        if cookie is None:
+        # Under concurrent use, OLM occasionally Set-Cookies the same name
+        # twice (different path/domain), and `s.cookies.get('XSRF-TOKEN')`
+        # raises CookieConflictError. Iterate explicitly and pick the most
+        # recent matching cookie so concurrent workers don't crash.
+        matches = [c for c in s.cookies if c.name == "XSRF-TOKEN"]
+        if not matches:
             return None
         # The cookie value is URL-encoded by Laravel; the header expects the
         # decoded form.
-        return unquote(cookie)
+        return unquote(matches[-1].value)
 
     def _maybe_refresh(self) -> None:
-        """Re-login if the session is stale or doesn't exist yet."""
-        if self._session is None or (time.time() - self._login_ts) > SESSION_REFRESH_SEC:
+        """Re-login if the session is stale or doesn't exist yet.
+
+        Tries the on-disk cookie cache first so we don't hit /api/auth/login
+        on every script run (which is throttled aggressively — 429 after a
+        few attempts per hour).
+        """
+        if self._session is None:
+            if self._try_load_cached():
+                return
+            self._login()
+            return
+        if (time.time() - self._login_ts) > SESSION_REFRESH_SEC:
             self._login()
 
     # ─── request proxy with auto-relogin on 401/419 ─────────────────────
 
     def request(self, method: str, url: str, **kw) -> requests.Response:
-        self._maybe_refresh()
-        assert self._session is not None  # narrows for type-checkers
-        # Send the XSRF header on every call — needed for non-GET, ignored for GET
-        xsrf = self._extract_xsrf(self._session)
-        headers = kw.pop("headers", {}) or {}
-        if xsrf and "X-XSRF-TOKEN" not in {h.title() for h in headers}:
-            headers["X-XSRF-TOKEN"] = xsrf
-        headers.setdefault("Accept", "application/json")
-        headers.setdefault("Referer", self._base + "/")
-        r = self._session.request(method, url, headers=headers, **kw)
-        # On stale-session signals, re-login once and retry
-        if r.status_code in (401, 419):
-            log.warning("OLM returned %s — re-logging in once", r.status_code)
-            self._login()
+        # The underlying `requests.Session` cookies jar is NOT thread-safe.
+        # Concurrent calls produce CookieConflictError when both threads see
+        # Set-Cookie responses simultaneously. Serialize the entire HTTP
+        # exchange here. The signed-url call is fast (~200-500ms) so this
+        # isn't a real throughput hit — and the caller's rate limiter
+        # already pins us to 1 OLM API call per second anyway. The lock is
+        # an RLock so this call can transitively invoke _login() (which
+        # also acquires the lock) without deadlocking.
+        with self._login_lock:
+            self._maybe_refresh()
+            assert self._session is not None  # narrows for type-checkers
             xsrf = self._extract_xsrf(self._session)
-            if xsrf:
+            headers = kw.pop("headers", {}) or {}
+            if xsrf and "X-XSRF-TOKEN" not in {h.title() for h in headers}:
                 headers["X-XSRF-TOKEN"] = xsrf
+            headers.setdefault("Accept", "application/json")
+            headers.setdefault("Referer", self._base + "/")
             r = self._session.request(method, url, headers=headers, **kw)
-        return r
+            if r.status_code in (401, 419):
+                log.warning("OLM returned %s — re-logging in once", r.status_code)
+                self._login()
+                xsrf = self._extract_xsrf(self._session)
+                if xsrf:
+                    headers["X-XSRF-TOKEN"] = xsrf
+                r = self._session.request(method, url, headers=headers, **kw)
+            return r
 
     def get(self, url: str, **kw) -> requests.Response:
         return self.request("GET", url, **kw)

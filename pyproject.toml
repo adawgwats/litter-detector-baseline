@@ -19,13 +19,23 @@ dependencies = [
 export = [
     "ultralytics>=8.0",
 ]
+train = [
+    "ultralytics>=8.3",
+    "psutil>=5.9",
+    "pyyaml>=6.0",
+    "Pillow>=10.0",
+]
 ingest = [
     "boto3>=1.34",
+    "botocore[crt]>=1.34",
     "requests>=2.31",
+    "Pillow>=10.0",        # resize downloaded OLM images to imgsz=1280 before R2 upload
+    "pillow-heif>=0.16",   # iPhone HEIC support (OLM has many .HEIC uploads)
 ]
 dev = [
     "pytest>=8.0",
     "boto3>=1.34",
+    "botocore[crt]>=1.34",
     "requests>=2.31",
     "moto[s3]>=5.0",
 ]
@@ -33,6 +43,10 @@ dev = [
 [project.scripts]
 litter-detector-baseline = "litter_detector_baseline.__main__:main"
 litter-detector-ingest = "litter_detector_baseline.ingest.__main__:main"
+# Training-pipeline entry points are invoked as ``python -m training.X``
+# from the repo root (per docs/training_quickstart.md). The ``training/``
+# tree lives at the repo root, not under ``src/``, so console_scripts
+# bindings don't resolve after pip install — keep them out of here.
 
 [tool.setuptools.package-dir]
 "" = "src"

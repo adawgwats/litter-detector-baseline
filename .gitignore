@@ -8,3 +8,22 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Locally cached upstream-dataset payloads (annotations, images, ...).
+# Subpackages under ingest/ download these to the repo-root data/ dir on
+# demand. Anchored to root so it does NOT match training/data/, which is
+# a Python module of dataset-prep scripts (not cached data).
+# Snapshots committed to git live under configs/taxonomies/ instead.
+/data/
+
+# Pretrained model weights (yolo11n.pt etc.) — Ultralytics auto-downloads
+# on first use; should not be in source control.
+*.pt
+
+# Python build artifacts.
+*.egg-info/
+
+# Local credential exports for development shells. The authoritative copy
+# lives in AWS Secrets Manager; these are convenience exports written by
+# scripts/put_r2_secret.py.
+.env*
+

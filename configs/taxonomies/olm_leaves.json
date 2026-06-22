@@ -1,0 +1,703 @@
+{
+  "source": "https://openlittermap.com/api/tags/all",
+  "fetched_at_utc": "2026-05-22",
+  "schema": "list of {category, object} pairs; the OLM leaf = (category, object)",
+  "leaves": [
+    {
+      "category": "alcohol",
+      "object": "bottle"
+    },
+    {
+      "category": "alcohol",
+      "object": "bottle_cap"
+    },
+    {
+      "category": "alcohol",
+      "object": "broken_glass"
+    },
+    {
+      "category": "alcohol",
+      "object": "can"
+    },
+    {
+      "category": "alcohol",
+      "object": "cup"
+    },
+    {
+      "category": "alcohol",
+      "object": "glass"
+    },
+    {
+      "category": "alcohol",
+      "object": "label"
+    },
+    {
+      "category": "alcohol",
+      "object": "other"
+    },
+    {
+      "category": "alcohol",
+      "object": "packaging"
+    },
+    {
+      "category": "alcohol",
+      "object": "pull_ring"
+    },
+    {
+      "category": "alcohol",
+      "object": "six_pack_rings"
+    },
+    {
+      "category": "alcohol",
+      "object": "wine_cork"
+    },
+    {
+      "category": "art",
+      "object": "graffiti"
+    },
+    {
+      "category": "art",
+      "object": "mural"
+    },
+    {
+      "category": "art",
+      "object": "other"
+    },
+    {
+      "category": "civic",
+      "object": "bags_litter"
+    },
+    {
+      "category": "civic",
+      "object": "blocked_drain"
+    },
+    {
+      "category": "civic",
+      "object": "fallen_tree"
+    },
+    {
+      "category": "civic",
+      "object": "loose_cables"
+    },
+    {
+      "category": "civic",
+      "object": "other"
+    },
+    {
+      "category": "civic",
+      "object": "overflowing_bin"
+    },
+    {
+      "category": "civic",
+      "object": "pothole"
+    },
+    {
+      "category": "civic",
+      "object": "walkability"
+    },
+    {
+      "category": "coffee",
+      "object": "cup"
+    },
+    {
+      "category": "coffee",
+      "object": "cup_carrier"
+    },
+    {
+      "category": "coffee",
+      "object": "lid"
+    },
+    {
+      "category": "coffee",
+      "object": "other"
+    },
+    {
+      "category": "coffee",
+      "object": "packaging"
+    },
+    {
+      "category": "coffee",
+      "object": "pod"
+    },
+    {
+      "category": "coffee",
+      "object": "sleeve"
+    },
+    {
+      "category": "coffee",
+      "object": "stirrer"
+    },
+    {
+      "category": "coffee",
+      "object": "straw"
+    },
+    {
+      "category": "dumping",
+      "object": "dumping"
+    },
+    {
+      "category": "dumping",
+      "object": "other"
+    },
+    {
+      "category": "electronics",
+      "object": "battery"
+    },
+    {
+      "category": "electronics",
+      "object": "cable"
+    },
+    {
+      "category": "electronics",
+      "object": "charger"
+    },
+    {
+      "category": "electronics",
+      "object": "headphones"
+    },
+    {
+      "category": "electronics",
+      "object": "light_bulb"
+    },
+    {
+      "category": "electronics",
+      "object": "other"
+    },
+    {
+      "category": "electronics",
+      "object": "phone"
+    },
+    {
+      "category": "electronics",
+      "object": "printer_cartridge"
+    },
+    {
+      "category": "food",
+      "object": "bag"
+    },
+    {
+      "category": "food",
+      "object": "box"
+    },
+    {
+      "category": "food",
+      "object": "can"
+    },
+    {
+      "category": "food",
+      "object": "chopsticks"
+    },
+    {
+      "category": "food",
+      "object": "container"
+    },
+    {
+      "category": "food",
+      "object": "crisp_packet"
+    },
+    {
+      "category": "food",
+      "object": "cutlery"
+    },
+    {
+      "category": "food",
+      "object": "gum"
+    },
+    {
+      "category": "food",
+      "object": "jar"
+    },
+    {
+      "category": "food",
+      "object": "lid"
+    },
+    {
+      "category": "food",
+      "object": "napkins"
+    },
+    {
+      "category": "food",
+      "object": "other"
+    },
+    {
+      "category": "food",
+      "object": "packaging"
+    },
+    {
+      "category": "food",
+      "object": "packet"
+    },
+    {
+      "category": "food",
+      "object": "pizza_box"
+    },
+    {
+      "category": "food",
+      "object": "plate"
+    },
+    {
+      "category": "food",
+      "object": "sachet"
+    },
+    {
+      "category": "food",
+      "object": "skewer"
+    },
+    {
+      "category": "food",
+      "object": "straw"
+    },
+    {
+      "category": "food",
+      "object": "takeaway_container"
+    },
+    {
+      "category": "food",
+      "object": "tinfoil"
+    },
+    {
+      "category": "food",
+      "object": "tray"
+    },
+    {
+      "category": "food",
+      "object": "wrapper"
+    },
+    {
+      "category": "industrial",
+      "object": "bricks"
+    },
+    {
+      "category": "industrial",
+      "object": "chemical_container"
+    },
+    {
+      "category": "industrial",
+      "object": "construction"
+    },
+    {
+      "category": "industrial",
+      "object": "container"
+    },
+    {
+      "category": "industrial",
+      "object": "oil_container"
+    },
+    {
+      "category": "industrial",
+      "object": "oil_drum"
+    },
+    {
+      "category": "industrial",
+      "object": "other"
+    },
+    {
+      "category": "industrial",
+      "object": "pallet"
+    },
+    {
+      "category": "industrial",
+      "object": "pipe"
+    },
+    {
+      "category": "industrial",
+      "object": "tape"
+    },
+    {
+      "category": "industrial",
+      "object": "wire"
+    },
+    {
+      "category": "marine",
+      "object": "buoy"
+    },
+    {
+      "category": "marine",
+      "object": "cotton_bud_stick"
+    },
+    {
+      "category": "marine",
+      "object": "crate"
+    },
+    {
+      "category": "marine",
+      "object": "fishing_hook"
+    },
+    {
+      "category": "marine",
+      "object": "fishing_line"
+    },
+    {
+      "category": "marine",
+      "object": "fishing_lure"
+    },
+    {
+      "category": "marine",
+      "object": "fishing_net"
+    },
+    {
+      "category": "marine",
+      "object": "macroplastics"
+    },
+    {
+      "category": "marine",
+      "object": "microplastics"
+    },
+    {
+      "category": "marine",
+      "object": "nurdles"
+    },
+    {
+      "category": "marine",
+      "object": "other"
+    },
+    {
+      "category": "marine",
+      "object": "polystyrene_fragment"
+    },
+    {
+      "category": "marine",
+      "object": "rope"
+    },
+    {
+      "category": "marine",
+      "object": "shellfish_bag"
+    },
+    {
+      "category": "marine",
+      "object": "shotgun_cartridge"
+    },
+    {
+      "category": "marine",
+      "object": "styrofoam"
+    },
+    {
+      "category": "medical",
+      "object": "bandage"
+    },
+    {
+      "category": "medical",
+      "object": "face_mask"
+    },
+    {
+      "category": "medical",
+      "object": "gloves"
+    },
+    {
+      "category": "medical",
+      "object": "inhaler"
+    },
+    {
+      "category": "medical",
+      "object": "medicine_bottle"
+    },
+    {
+      "category": "medical",
+      "object": "other"
+    },
+    {
+      "category": "medical",
+      "object": "pill_pack"
+    },
+    {
+      "category": "medical",
+      "object": "plaster"
+    },
+    {
+      "category": "medical",
+      "object": "sanitiser"
+    },
+    {
+      "category": "medical",
+      "object": "syringe"
+    },
+    {
+      "category": "medical",
+      "object": "test_kit"
+    },
+    {
+      "category": "other",
+      "object": "appliance"
+    },
+    {
+      "category": "other",
+      "object": "bags_litter"
+    },
+    {
+      "category": "other",
+      "object": "balloon"
+    },
+    {
+      "category": "other",
+      "object": "cable_tie"
+    },
+    {
+      "category": "other",
+      "object": "clothing"
+    },
+    {
+      "category": "other",
+      "object": "furniture"
+    },
+    {
+      "category": "other",
+      "object": "mattress"
+    },
+    {
+      "category": "other",
+      "object": "metal"
+    },
+    {
+      "category": "other",
+      "object": "other"
+    },
+    {
+      "category": "other",
+      "object": "overflowing_bin"
+    },
+    {
+      "category": "other",
+      "object": "paint_can"
+    },
+    {
+      "category": "other",
+      "object": "paper"
+    },
+    {
+      "category": "other",
+      "object": "plastic"
+    },
+    {
+      "category": "other",
+      "object": "plastic_bag"
+    },
+    {
+      "category": "other",
+      "object": "poster"
+    },
+    {
+      "category": "other",
+      "object": "traffic_cone"
+    },
+    {
+      "category": "other",
+      "object": "umbrella"
+    },
+    {
+      "category": "pets",
+      "object": "dogshit"
+    },
+    {
+      "category": "pets",
+      "object": "dogshit_in_bag"
+    },
+    {
+      "category": "pets",
+      "object": "other"
+    },
+    {
+      "category": "sanitary",
+      "object": "condom"
+    },
+    {
+      "category": "sanitary",
+      "object": "condom_wrapper"
+    },
+    {
+      "category": "sanitary",
+      "object": "dental_floss"
+    },
+    {
+      "category": "sanitary",
+      "object": "deodorant_can"
+    },
+    {
+      "category": "sanitary",
+      "object": "ear_swabs"
+    },
+    {
+      "category": "sanitary",
+      "object": "menstrual_cup"
+    },
+    {
+      "category": "sanitary",
+      "object": "nappies"
+    },
+    {
+      "category": "sanitary",
+      "object": "other"
+    },
+    {
+      "category": "sanitary",
+      "object": "sanitary_pad"
+    },
+    {
+      "category": "sanitary",
+      "object": "tampon"
+    },
+    {
+      "category": "sanitary",
+      "object": "tissue"
+    },
+    {
+      "category": "sanitary",
+      "object": "toothbrush"
+    },
+    {
+      "category": "sanitary",
+      "object": "toothpaste_tube"
+    },
+    {
+      "category": "sanitary",
+      "object": "wipes"
+    },
+    {
+      "category": "smoking",
+      "object": "ashtray"
+    },
+    {
+      "category": "smoking",
+      "object": "box"
+    },
+    {
+      "category": "smoking",
+      "object": "butts"
+    },
+    {
+      "category": "smoking",
+      "object": "lighters"
+    },
+    {
+      "category": "smoking",
+      "object": "other"
+    },
+    {
+      "category": "smoking",
+      "object": "packaging"
+    },
+    {
+      "category": "smoking",
+      "object": "papers"
+    },
+    {
+      "category": "smoking",
+      "object": "pouch"
+    },
+    {
+      "category": "smoking",
+      "object": "rolling_filter"
+    },
+    {
+      "category": "smoking",
+      "object": "vape"
+    },
+    {
+      "category": "softdrinks",
+      "object": "bottle"
+    },
+    {
+      "category": "softdrinks",
+      "object": "bottle_cap"
+    },
+    {
+      "category": "softdrinks",
+      "object": "broken_glass"
+    },
+    {
+      "category": "softdrinks",
+      "object": "can"
+    },
+    {
+      "category": "softdrinks",
+      "object": "carton"
+    },
+    {
+      "category": "softdrinks",
+      "object": "cup"
+    },
+    {
+      "category": "softdrinks",
+      "object": "cup_carrier"
+    },
+    {
+      "category": "softdrinks",
+      "object": "juice_pouch"
+    },
+    {
+      "category": "softdrinks",
+      "object": "label"
+    },
+    {
+      "category": "softdrinks",
+      "object": "lid"
+    },
+    {
+      "category": "softdrinks",
+      "object": "other"
+    },
+    {
+      "category": "softdrinks",
+      "object": "packaging"
+    },
+    {
+      "category": "softdrinks",
+      "object": "pull_ring"
+    },
+    {
+      "category": "softdrinks",
+      "object": "straw"
+    },
+    {
+      "category": "softdrinks",
+      "object": "straw_wrapper"
+    },
+    {
+      "category": "vehicles",
+      "object": "battery"
+    },
+    {
+      "category": "vehicles",
+      "object": "bicycle"
+    },
+    {
+      "category": "vehicles",
+      "object": "bumper"
+    },
+    {
+      "category": "vehicles",
+      "object": "car_part"
+    },
+    {
+      "category": "vehicles",
+      "object": "hubcap"
+    },
+    {
+      "category": "vehicles",
+      "object": "license_plate"
+    },
+    {
+      "category": "vehicles",
+      "object": "light"
+    },
+    {
+      "category": "vehicles",
+      "object": "mirror"
+    },
+    {
+      "category": "vehicles",
+      "object": "other"
+    },
+    {
+      "category": "vehicles",
+      "object": "trim"
+    },
+    {
+      "category": "vehicles",
+      "object": "tyre"
+    },
+    {
+      "category": "vehicles",
+      "object": "wheel"
+    }
+  ]
+}

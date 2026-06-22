@@ -107,21 +107,63 @@ For local dev you can sidestep AWS by exporting `OLM_IDENTIFIER` and
 
 ## What auth UNLOCKS
 
-The unauth endpoints (`/api/clusters`, `/api/points`, `/api/tags/all`,
-`/global/stats-data`) already work without auth — those don't need this
-module. What auth gets you:
+The unauth endpoints (`/api/tags/all`, `/api/clusters`, `/api/global/stats-data`,
+`/api/points` — yes, the per-photo bbox endpoint is public, see below) work
+without auth. What auth gets you:
 
-- `/user/profile/photos` — bot account's own uploads (empty for us
-  since we don't upload from this account, but available)
-- Per-photo endpoints that require user context
-- Bulk-export endpoints (if/when OLM team grants them)
-- Any future endpoint OLM gates behind login
+- `POST /api/download` — **bulk CSV export** of per-photo metadata + tags for
+  a country / state / city. Async; queues a job, emails the bot account at
+  adawgwats@gmail.com with a public S3 link when complete. See § Bulk export
+  via /api/download below.
+- `GET /api/v3/user/photos` and friends — bot's own uploads (empty for us).
+- Per-photo endpoints that require user context.
+- Any future endpoint OLM gates behind login.
 
-The **session cookie does not unlock arbitrary bulk download of all
-525K OLM photos**. OLM does not expose that endpoint to any unauth or
-account-only user. Bulk access requires partnership outreach (see
-`dregsbane-ops#18` issue) — that's a separate workstream from this
-auth module.
+## Verified API surface (2026-05-22 recon)
+
+The original `/global/points` endpoint that the early `openlittermap.py`
+module used is **gone**. Replacement is `/api/points` with a different
+param shape. The full reconnaissance lives in
+`data/olm-sample/probe_findings.json`; the executive summary:
+
+| Endpoint | Auth | Notes |
+|---|---|---|
+| `GET /api/points` | none | Required: `bbox[left,bottom,right,top]` (assoc-array, NOT JSON-string), `zoom` (15-20). Returns paginated FeatureCollection with per-feature `summary` containing the full tag bundle (category_id, object_id, quantity, brand/material/custom-tag IDs). Bbox area capped per-zoom. |
+| `GET /api/points/{id}` | none | Single-photo detail. Same `summary` shape. |
+| `GET /api/photos/{id}/signed-url` | none, but **Referer-locked** to openlittermap.com | Returns a 5-min-TTL signed S3 URL. Set `Referer: https://openlittermap.com/`. |
+| `POST /api/download` | **session cookie** | Bulk CSV export (see below). |
+| `GET /api/tags/all` | none | Taxonomy (175 leaves). |
+| `GET /api/clusters` | none | 5000-feature heatmap aggregate. Useless for training (singletons have no photo_id). |
+
+## Bulk export via /api/download
+
+This is the path to a tag-rich training corpus without per-bbox enumeration.
+
+```python
+body = {"locationType": "country" | "state" | "city",
+        "locationId": <int>,
+        "format": "csv",
+        "layout": "default"}
+session.post("https://openlittermap.com/api/download", json=body)
+# returns: {"success": true}
+# OLM enqueues CreateCSVExport job → writes CSV to OLM's S3 with
+# public visibility → emails bot account a download link.
+```
+
+Locations are discovered via `GET /api/locations/country` → `GET /api/locations/country/{id}` (drills into states) → `GET /api/locations/state/{id}` (drills into cities). For our beta corpus we used `state_id=1` (County Cork, ~10,476 photos / 50,613 tags).
+
+### Throttle on /api/download — observed
+
+```
+X-RateLimit-Limit: 3
+X-RateLimit-Remaining: 2   (after one POST)
+```
+
+**3 CSV exports per window** (window length not exposed; treat as
+per-day until proven otherwise). Plan exports accordingly — do not
+casually re-trigger.
+
+## What auth does NOT unlock — be honest
 
 ## What auth does NOT unlock — be honest
 
