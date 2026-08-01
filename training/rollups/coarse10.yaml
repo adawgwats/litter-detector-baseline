@@ -1,0 +1,81 @@
+# Coarse-10 rollup over the 43-leaf canonical class space.
+#
+# Ten groups in the spirit of TACO's supercategories, used by
+# training/eval_v2.py as the second reporting granularity. Every one of
+# the 43 leaves (the TACO-mapped OLM leaves from
+# configs/label_crosswalk.csv — same list as
+# dregsbane-web-trail/src/lib/litter-classes.ts) appears exactly once;
+# tests/test_rollup_coarse10.py enforces that.
+#
+# Judgment calls, documented so nobody re-litigates them silently:
+#   - food.bag is "Paper food bag" in the UI -> paper, not
+#     bags_film_wrappers (which is the plastic-film group).
+#   - alcohol.glass (drinking glass) rides with broken glass: at curbside
+#     they are the same shard hazard, and TACO folds both under its
+#     "Glass fragment"-adjacent supercategories.
+#   - food.jar (glass) + softdrinks.carton + pizza/cardboard boxes ->
+#     food_containers: "container the food/drink came in", regardless of
+#     material (TACO's Carton supercategory does the same).
+#   - sanitary.deodorant_can -> cans (it is an aerosol can; TACO puts
+#     aerosols under Can).
+#   - food.cutlery, food.tinfoil, six-pack rings, marine debris, medical
+#     items, textiles, batteries, and the other.* fragments all land in
+#     "other": too rare in TACO to earn a group at 10 buckets.
+
+version: 1
+source_space: 43-leaf OLM (canonical alphabetical order, see data.yaml)
+
+groups:
+  bottles:
+    - alcohol.bottle
+    - softdrinks.bottle
+  caps_lids:
+    - alcohol.bottle_cap
+    - food.lid
+    - softdrinks.bottle_cap
+    - softdrinks.lid
+    - softdrinks.pull_ring
+  cans:
+    - food.can
+    - sanitary.deodorant_can
+    - softdrinks.can
+  bags_film_wrappers:
+    - food.crisp_packet
+    - food.wrapper
+    - other.bags_litter
+    - other.plastic_bag
+  cups_straws:
+    - coffee.cup
+    - softdrinks.cup
+    - softdrinks.straw
+  food_containers:
+    - food.box
+    - food.container
+    - food.jar
+    - food.pizza_box
+    - food.takeaway_container
+    - softdrinks.carton
+  paper:
+    - food.bag
+    - other.paper
+    - sanitary.tissue
+  glass_broken:
+    - alcohol.broken_glass
+    - alcohol.glass
+  smoking:
+    - smoking.butts
+  other:
+    - alcohol.six_pack_rings
+    - electronics.battery
+    - food.cutlery
+    - food.other
+    - food.tinfoil
+    - marine.polystyrene_fragment
+    - marine.rope
+    - medical.gloves
+    - medical.pill_pack
+    - other.clothing
+    - other.metal
+    - other.other
+    - other.plastic
+    - sanitary.toothpaste_tube
