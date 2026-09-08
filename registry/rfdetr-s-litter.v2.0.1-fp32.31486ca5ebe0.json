@@ -1,0 +1,124 @@
+{
+  "artifactPath": "../roboflow-deliverables/v2.0.1-fp32/rfdetr-s-litter.fp32.onnx",
+  "identity": {
+    "architecture": "rfdetr",
+    "artifact": {
+      "bytes": 120039167,
+      "sha256": "a59fc4174a770724d537b18797ae1ef64bb47d2ace4704456fa50d9c20f22354"
+    },
+    "classes": {
+      "count": 43,
+      "sha256": "00b96ef3f59d7da7d2ea49ff4be8dae6867fbe2611db16f6663b35aecfb531ca"
+    },
+    "conversion": {
+      "exporter": "export.export_rfdetr.export (rfdetr RFDETRSmall.export -> torch.onnx.export; graph producer pytorch 2.6.0)",
+      "mechanism": "native-export",
+      "opset": 17,
+      "sourceCheckpointSha256": null,
+      "sourceSha256": null
+    },
+    "io": {
+      "input": {
+        "dtype": "FLOAT",
+        "name": "input",
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ]
+      },
+      "outputs": [
+        {
+          "dtype": "FLOAT",
+          "name": "dets",
+          "shape": [
+            1,
+            300,
+            4
+          ]
+        },
+        {
+          "dtype": "FLOAT",
+          "name": "labels",
+          "shape": [
+            1,
+            300,
+            44
+          ]
+        }
+      ]
+    },
+    "modelName": "rfdetr-s-litter",
+    "precision": "fp32",
+    "target": {
+      "executionProvider": "cpu",
+      "hostClass": "aws-lambda-arm64-nodejs20",
+      "runtime": "onnxruntime-node",
+      "runtimeVersion": "^1.27.0"
+    },
+    "thresholds": {
+      "confRecommended": 0.4,
+      "iouRecommended": 0.45
+    }
+  },
+  "measuredOnTarget": false,
+  "notes": [
+    "Serving artifact. dregsbane-web-backend/src/lib/inference/session.ts loads it from MODEL_S3_URI with the sidecar next to it; its ModelMeta interface has no precision field, so nothing on the serving side checks that these bytes are fp32. This record is the only place that binding is written down.",
+    "sourceCheckpointSha256 is null because the training checkpoint was never hashed. Provenance stops at the ONNX; the .pth is not on this disk and no receipt records its digest.",
+    "targetRuntimeVersion is the semver range from dregsbane-web-backend/package.json (onnxruntime-node ^1.27.0). The version actually resolved at deploy time is not recorded anywhere, so this record cannot state it.",
+    "parity role=reference: this artifact was side a of the fp32-vs-fp16 comparison, and is also side a of reports/parity-rfdetr-v2.0.1-fp32-vs-int8-dyn.json. Being a baseline licenses nothing about its own fidelity to the checkpoint it was exported from; no such measurement exists.",
+    "measuredOnTarget is false: the parity evidence was gathered by Python onnxruntime 1.29.0 on a macOS arm64 workstation, and this artifact serves under onnxruntime-node on arm64 Lambda. The divergence numbers are evidence about the conversion, not about the deployment."
+  ],
+  "parity": {
+    "artifactSha256": "a59fc4174a770724d537b18797ae1ef64bb47d2ace4704456fa50d9c20f22354",
+    "comparedAgainstSha256": "ccdddc438a3f301f18e9a39db9741ff505339e7ac47b65f535499d994ce7faab",
+    "comparison": {
+      "atRecommendedThreshold": {
+        "classArgmaxFlips": 6,
+        "detectionsCandidate": 203,
+        "detectionsReference": 202,
+        "imagesWithAnyFlip": 10,
+        "threshold": 0.4,
+        "thresholdFlips": 19
+      },
+      "fixtureCount": 200,
+      "fixtureManifestSha256": "7a185ee6a8836a7669dcf9887f40d104070df37fa17e145607a719aa639d9234",
+      "generatedAt": "2026-09-01T03:16:47+00:00",
+      "latencyMsThisArtifact": {
+        "n": 200,
+        "p50": 311.6853954998078,
+        "p95": 390.99731456371956
+      },
+      "maxAbsDeltaByOutput": {
+        "dets": 2.160800814628601,
+        "labels": 12.17345905303955
+      },
+      "maxRelDeltaByOutput": {
+        "dets": 35878.05436840682,
+        "labels": 79.49344942631622
+      },
+      "schemaVersion": 2
+    },
+    "confThreshold": 0.4,
+    "measuredOn": {
+      "executionProvider": "CPUExecutionProvider",
+      "host": "macOS-26.5.1-arm64-arm-64bit",
+      "runtime": "onnxruntime",
+      "runtimeVersion": "1.29.0"
+    },
+    "report": "reports/parity-rfdetr-v2.0.1-fp32-vs-fp16.json",
+    "reportSha256": "6345bb0c15871456e0d31587974269c073429e25d373d1236f25a69df7df55e6",
+    "role": "reference"
+  },
+  "precisionEvidence": {
+    "impliedPrecision": "fp32",
+    "weightBytesByDtype": {
+      "FLOAT": 113931968
+    }
+  },
+  "recordId": "31486ca5ebe0ee190b043d8bf723961a3f55d6c0b3cf2e1c86c48b27ac91ea4f",
+  "registeredAt": "2026-09-08T04:00:42+00:00",
+  "schemaVersion": 1,
+  "version": "v2.0.1-fp32"
+}
