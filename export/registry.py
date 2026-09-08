@@ -758,6 +758,34 @@ class ReleaseRecord:
         return hashlib.sha256(canonical_bytes(self.identity())).hexdigest()
 
     @property
+    def release_key(self) -> str:
+        """Identity with the artifact hash removed: the recipe and the
+        destination, without the bytes.
+
+        This is what uniqueness is keyed on, alongside (model, version). Two
+        records sharing a release_key were produced the same way for the same
+        place; if their bytes differ, exactly one of two things is true and
+        both deserve a refusal:
+
+        * a release label is being re-pointed at new bytes — the S3-key
+          overwrite this registry was built to catch; or
+        * the build is not reproducible, and the recipe is therefore not a
+          sufficient identifier for what shipped. TensorRT plans measurably
+          are not: the same ONNX and config produced three different plans
+          here. That case needs a build identifier, not a silent second row.
+
+        Keying on less than this made the module contradict itself twice.
+        First it excluded the target, so an ONNX and the engine built from it
+        collided. Then it excluded the conversion, so two engines differing
+        only in a builder flag — TF32 on against TF32 off, same GPU, same
+        driver, measurably different numerics — collided too. identity()
+        distinguished both pairs the whole time.
+        """
+        ident = dict(self.identity())
+        ident.pop("artifact", None)
+        return hashlib.sha256(canonical_bytes(ident)).hexdigest()
+
+    @property
     def short_id(self) -> str:
         return self.record_id[:12]
 
@@ -924,19 +952,21 @@ class Registry:
             if (
                 other.model_name == record.model_name
                 and other.version == record.version
-                and other.target.digest == record.target.digest
+                and other.release_key == record.release_key
                 and other.artifact_sha256 != record.artifact_sha256
             ):
                 raise VersionCollisionError(
-                    f"{record.model_name} {record.version} on target "
-                    f"{other.target.runtime}/{other.target.execution_provider}"
-                    f"@{other.target.runtime_version} is already registered as "
-                    f"artifact {other.artifact_sha256[:12]}… (record "
-                    f"{other.short_id}); this artifact is "
-                    f"{record.artifact_sha256[:12]}…. One version string cannot "
-                    f"name two sets of bytes FOR THE SAME TARGET — rev the "
-                    f"version, or register under the target it was actually "
-                    f"built for"
+                    f"{record.model_name} {record.version} is already "
+                    f"registered as artifact {other.artifact_sha256[:12]}… "
+                    f"(record {other.short_id}); this artifact is "
+                    f"{record.artifact_sha256[:12]}…. Same recipe, same target "
+                    f"({other.target.runtime}/"
+                    f"{other.target.execution_provider}@"
+                    f"{other.target.runtime_version}), different bytes — so "
+                    f"either a release label is being re-pointed at new bytes, "
+                    f"or this build is not reproducible and the recipe alone "
+                    f"does not identify what shipped. Neither is a second row: "
+                    f"rev the version, or record a build identifier"
                 )
 
         prior = existing.get(record.record_id)

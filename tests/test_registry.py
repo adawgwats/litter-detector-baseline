@@ -513,7 +513,7 @@ def test_registering_different_bytes_under_the_same_version_is_rejected(tmp_path
 
     report = write_report(tmp_path, name="other.json", sha_b=SHA_C)
     impostor = make_record(tmp_path, report=report, artifact_sha256=SHA_C)
-    with pytest.raises(VersionCollisionError, match="cannot name two sets of bytes"):
+    with pytest.raises(VersionCollisionError, match="different bytes"):
         reg.register(impostor)
     assert len(reg.paths()) == 1
 
@@ -811,7 +811,7 @@ def test_same_target_two_artifacts_still_collides(tmp_path: Path) -> None:
         report=write_report(tmp_path, name="two.json", sha_b=SHA_C),
         artifact_sha256=SHA_C,
     )  # identical target, different bytes, same version
-    with pytest.raises(VersionCollisionError, match="SAME TARGET"):
+    with pytest.raises(VersionCollisionError, match="Same recipe, same target"):
         reg.register(other)
 
 
@@ -860,3 +860,63 @@ def test_transcribing_a_non_ort_report_is_refused(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="not made under it"):
         parity_ref_from_report(p, "candidate", root=tmp_path)
+
+
+def test_two_builds_for_one_target_differing_only_in_config_can_coexist(tmp_path: Path) -> None:
+    """TF32 on vs TF32 off: same GPU, same driver, same target — different
+    builder flag, different bytes, measurably different numerics.
+
+    The target digest is identical for these two, so keying uniqueness on the
+    target alone was not enough. The builder configuration lives in
+    Conversion, which identity() has always covered, so the release key
+    covers it too.
+    """
+    reg = Registry(tmp_path / "registry")
+    tf32_off = make_record(
+        tmp_path,
+        report=write_report(tmp_path, name="off.json", sha_b=SHA_B),
+        artifact_sha256=SHA_B,
+        target=GPU_TARGET,
+        conversion=Conversion(
+            exporter="export.trt_build",
+            mechanism="trtexec builder, TF32 disabled",
+            opset=17,
+            source_sha256=SHA_A,
+        ),
+    )
+    tf32_on = make_record(
+        tmp_path,
+        report=write_report(tmp_path, name="on.json", sha_b=SHA_C),
+        artifact_sha256=SHA_C,
+        target=GPU_TARGET,
+        conversion=Conversion(
+            exporter="export.trt_build",
+            mechanism="trtexec builder, TF32 enabled (default)",
+            opset=17,
+            source_sha256=SHA_A,
+        ),
+    )
+    assert tf32_off.target.digest == tf32_on.target.digest   # same target
+    assert tf32_off.release_key != tf32_on.release_key       # different build
+
+    reg.register(tf32_off)
+    reg.register(tf32_on)          # must NOT raise
+    assert len(reg.records()) == 2
+
+
+def test_an_unreproducible_rebuild_is_refused_rather_than_silently_stored(tmp_path: Path) -> None:
+    """Same recipe, same target, different bytes.
+
+    TensorRT plans measurably are not byte-reproducible, so this is a real
+    case and not a hypothetical. Refusing it is the point: the recipe does not
+    identify what shipped, and a second row would hide that.
+    """
+    reg = Registry(tmp_path / "registry")
+    first = make_record(tmp_path, report=write_report(tmp_path, name="b1.json", sha_b=SHA_B),
+                        artifact_sha256=SHA_B, target=GPU_TARGET)
+    rebuild = make_record(tmp_path, report=write_report(tmp_path, name="b2.json", sha_b=SHA_C),
+                          artifact_sha256=SHA_C, target=GPU_TARGET)
+    assert first.release_key == rebuild.release_key
+    reg.register(first)
+    with pytest.raises(VersionCollisionError, match="not reproducible"):
+        reg.register(rebuild)
