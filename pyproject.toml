@@ -32,6 +32,14 @@ ingest = [
     "Pillow>=10.0",        # resize downloaded OLM images to imgsz=1280 before R2 upload
     "pillow-heif>=0.16",   # iPhone HEIC support (OLM has many .HEIC uploads)
 ]
+parity = [
+    # Model-conversion quality tooling. Deliberately NOT in the required
+    # dependency set: the reference ONNX Runtime backend must stay
+    # installable without pulling a conversion toolchain.
+    "onnx>=1.16",
+    "onnxconverter-common>=1.14",
+    "Pillow>=10.0",
+]
 dev = [
     "pytest>=8.0",
     "boto3>=1.34",

@@ -66,6 +66,29 @@ config. For deployment on a CrustBot-style litter robot, plug in a
 out-of-the-box COCO baseline (useful for sanity checks before custom
 data is collected), use `configs/yolov8n_coco_baseline.yaml`.
 
+## Conversion parity
+
+Before an exported artifact replaces another, `export/parity.py` measures
+what the conversion changed: raw graph outputs elementwise, then decoded
+detections at the sidecar's recommended threshold, over real corpus
+images rather than random tensors. It reports the divergence
+distribution and deliberately owns no pass/fail tolerance — `--baseline`
+gates on regression against a previous measurement, which is a claim the
+data supports.
+
+```bash
+uv pip install --python .venv/bin/python -e ".[parity]"
+python scripts/build_parity_fixtures.py --corpus ../cleanup-pairs-corpus \
+    --pairs 100 --seed 0 --out reports/parity-fixtures-v1.txt
+python -m export.parity --a <fp32>.onnx --b <fp16>.onnx \
+    --meta <fp32>.meta.json --fixtures reports/parity-fixtures-v1.txt \
+    --report-json reports/parity.json
+```
+
+Measured results, and the three `onnxconverter_common.float16` defects
+found by running it, are in
+[`reports/CONVERSION-REPORT.md`](reports/CONVERSION-REPORT.md).
+
 ## Hardware target
 
 Designed for Raspberry Pi 5 CPU inference via ONNX Runtime. Memory

@@ -1,0 +1,2328 @@
+{
+  "artifacts": {
+    "a": {
+      "bytes": 120039167,
+      "path": "../roboflow-deliverables/v2.0.1-fp32/rfdetr-s-litter.fp32.onnx",
+      "sha256": "a59fc4174a770724d537b18797ae1ef64bb47d2ace4704456fa50d9c20f22354"
+    },
+    "b": {
+      "bytes": 35973010,
+      "path": "dist/parity/rfdetr-s-litter.int8-dyn.onnx",
+      "sha256": "5d478866ab4204ec97f273c153f13056964e2034b8d8d2c524e5c5f0c102b534"
+    }
+  },
+  "decode": {
+    "byThreshold": [
+      {
+        "classArgmaxFlips": 65,
+        "detectionsA": 325,
+        "detectionsB": 321,
+        "flipsAOnly": 85,
+        "flipsBOnly": 81,
+        "imagesWhereTopKTruncationBinds": 0,
+        "imagesWithAnyFlip": 58,
+        "isRecommended": false,
+        "threshold": 0.25,
+        "thresholdFlips": 166
+      },
+      {
+        "classArgmaxFlips": 39,
+        "detectionsA": 281,
+        "detectionsB": 268,
+        "flipsAOnly": 84,
+        "flipsBOnly": 71,
+        "imagesWhereTopKTruncationBinds": 0,
+        "imagesWithAnyFlip": 57,
+        "isRecommended": false,
+        "threshold": 0.3,
+        "thresholdFlips": 155
+      },
+      {
+        "classArgmaxFlips": 19,
+        "detectionsA": 202,
+        "detectionsB": 202,
+        "flipsAOnly": 56,
+        "flipsBOnly": 56,
+        "imagesWhereTopKTruncationBinds": 0,
+        "imagesWithAnyFlip": 50,
+        "isRecommended": true,
+        "threshold": 0.4,
+        "thresholdFlips": 112
+      },
+      {
+        "classArgmaxFlips": 10,
+        "detectionsA": 160,
+        "detectionsB": 157,
+        "flipsAOnly": 42,
+        "flipsBOnly": 39,
+        "imagesWhereTopKTruncationBinds": 0,
+        "imagesWithAnyFlip": 39,
+        "isRecommended": false,
+        "threshold": 0.5,
+        "thresholdFlips": 81
+      },
+      {
+        "classArgmaxFlips": 4,
+        "detectionsA": 129,
+        "detectionsB": 121,
+        "flipsAOnly": 37,
+        "flipsBOnly": 29,
+        "imagesWhereTopKTruncationBinds": 0,
+        "imagesWithAnyFlip": 34,
+        "isRecommended": false,
+        "threshold": 0.6,
+        "thresholdFlips": 66
+      }
+    ],
+    "classCount": 43,
+    "confThresholdRecommended": 0.4,
+    "maxBoxCoordDeltaAnyQuery": 1.0,
+    "maxConfidenceDeltaAnyQuery": 0.7768223310164539,
+    "maxDetections": 100,
+    "meanPerImageMaxConfidenceDelta": 0.13869147713249325,
+    "queriesPerImage": 300
+  },
+  "environment": {
+    "executionProviders": [
+      "CPUExecutionProvider"
+    ],
+    "machine": "arm64",
+    "note": "CPU execution provider. Latency figures here describe this machine only and license nothing about any other host, runtime, or accelerator.",
+    "onnxruntime": "1.29.0",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.12.13"
+  },
+  "fixtures": {
+    "count": 200,
+    "inputShape": [
+      1,
+      3,
+      512,
+      512
+    ],
+    "manifest": "reports/parity-fixtures-v1.txt",
+    "manifestSha256": "7a185ee6a8836a7669dcf9887f40d104070df37fa17e145607a719aa639d9234",
+    "normalization": {
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ]
+    },
+    "resizeNote": "Pillow LANCZOS squash resize; the deployed pipeline uses sharp/libvips. Both artifacts receive the identical tensor, so the kernel cancels out of every delta below."
+  },
+  "generatedAt": "2026-09-08T03:23:50+00:00",
+  "latencyMs": {
+    "a": {
+      "n": 200,
+      "p50": 284.3005409995385,
+      "p95": 582.9851580507235
+    },
+    "b": {
+      "n": 200,
+      "p50": 154.05031299815164,
+      "p95": 333.658923549774
+    },
+    "note": "session.run() wall time only \u2014 excludes preprocess and decode. Desktop CPU. NOT an embedded or accelerator number."
+  },
+  "perImage": [
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/100ugf7/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/100ugf7/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/10ja9j6/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/10ja9j6/11.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/128xvyy/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/128xvyy/13.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/13f6kah/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/13f6kah/5.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 11,
+        "0.3": 10,
+        "0.4": 7,
+        "0.5": 4,
+        "0.6": 3
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/13glh5h/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/13glh5h/1.gif"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/13x5ini/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/13x5ini/8.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/146wb2s/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/146wb2s/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 7,
+        "0.3": 7,
+        "0.4": 5,
+        "0.5": 5,
+        "0.6": 4
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/14ooyyi/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/14ooyyi/8.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/14qt5b4/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/14qt5b4/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/14v1oej/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/14v1oej/16.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/154f9qx/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/154f9qx/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/157u7po/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/157u7po/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 1,
+        "0.4": 2,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/17iezke/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 3,
+        "0.3": 3,
+        "0.4": 3,
+        "0.5": 4,
+        "0.6": 4
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/17iezke/7.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/17ikocj/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 2,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/17ikocj/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 2,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/17jw9q5/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/17jw9q5/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/17passr/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/17passr/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1acmcod/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1acmcod/5.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 10,
+        "0.3": 9,
+        "0.4": 2,
+        "0.5": 1,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1at4u4u/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1at4u4u/5.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1bdz5bg/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1bdz5bg/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1bgohfy/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1bgohfy/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 1,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1c6lq1z/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1c6lq1z/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1cf7k4j/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1cf7k4j/10.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1cpuj9j/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1cpuj9j/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1d13wv9/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1d13wv9/17.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1d384ua/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 1,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1d384ua/8.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 2,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1ehyi4l/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1ehyi4l/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 1,
+        "0.4": 2,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1flhn8r/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1flhn8r/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 1,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1fulmqx/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1fulmqx/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1g2ober/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1g2ober/7.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1g6o4mv/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1g6o4mv/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1gddbhi/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1gddbhi/6.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 8,
+        "0.3": 7,
+        "0.4": 4,
+        "0.5": 3,
+        "0.6": 3
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1gi25ee/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1gi25ee/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1gk0meq/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1gk0meq/9.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1hi14io/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1hi14io/8.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 4,
+        "0.3": 3,
+        "0.4": 4,
+        "0.5": 4,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1hp29vx/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 1,
+        "0.5": 1,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1hp29vx/19.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1j87nxz/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1j87nxz/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1jl2ppp/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1jl2ppp/9.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1jsjnaz/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1jsjnaz/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1k6wy5y/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1k6wy5y/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1kqdgj8/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1kqdgj8/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1l2etcb/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1l2etcb/12.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 2,
+        "0.4": 2,
+        "0.5": 1,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1lgzgvt/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1lgzgvt/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1mcj3k4/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1mcj3k4/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1ml1dcl/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1ml1dcl/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 3,
+        "0.4": 2,
+        "0.5": 2,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1mmi2xt/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1mmi2xt/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1myqupj/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1myqupj/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1n8ff1n/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1n8ff1n/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1nngksr/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1nngksr/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 4,
+        "0.3": 4,
+        "0.4": 3,
+        "0.5": 3,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1nyvsku/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1nyvsku/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1oae5z1/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1oae5z1/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1osphj5/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1osphj5/9.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1pdtzg2/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1pdtzg2/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1pp3fop/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1pp3fop/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1pynrbx/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1pynrbx/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1qf2rdb/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1qf2rdb/5.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1qxu87i/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1qxu87i/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1rjiahs/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1rjiahs/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1rza27t/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1rza27t/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1s6ypuv/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1s6ypuv/1.png"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1s73i9h/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1s73i9h/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1sd5ih1/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1sd5ih1/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1sl6epf/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1sl6epf/8.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1t3n5tc/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 2,
+        "0.5": 2,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1t3n5tc/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1ugldww/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1ugldww/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 2,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1vac2ke/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/1vac2ke/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/t80px8/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/t80px8/17.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/tcwsmy/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/tcwsmy/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 3,
+        "0.3": 2,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/tllrrj/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/tllrrj/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 1,
+        "0.4": 2,
+        "0.5": 2,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/u5rfey/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/u5rfey/7.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 3,
+        "0.3": 4,
+        "0.4": 4,
+        "0.5": 3,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/uiir0c/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/uiir0c/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 3,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/uje0yz/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/uje0yz/5.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/vqhqdx/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 4,
+        "0.3": 3,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/vqhqdx/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 7,
+        "0.3": 8,
+        "0.4": 6,
+        "0.5": 6,
+        "0.6": 6
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/vum0ec/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 14,
+        "0.3": 11,
+        "0.4": 9,
+        "0.5": 2,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/vum0ec/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/xgsxdp/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/xgsxdp/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 8,
+        "0.3": 8,
+        "0.4": 5,
+        "0.5": 2,
+        "0.6": 3
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/xi5p3v/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/xi5p3v/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/ybo8va/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/ybo8va/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 2,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/yiosmv/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/yiosmv/11.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 5,
+        "0.3": 5,
+        "0.4": 5,
+        "0.5": 4,
+        "0.6": 4
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/yivoaz/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 4,
+        "0.3": 3,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/yivoaz/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/ynwr1a/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 3,
+        "0.4": 3,
+        "0.5": 2,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/ynwr1a/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/z084eu/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/DeTrashed/z084eu/4.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/107v46e/0.gif"
+    },
+    {
+      "flips": {
+        "0.25": 4,
+        "0.3": 3,
+        "0.4": 2,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/107v46e/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/16ldpau/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 4,
+        "0.3": 2,
+        "0.4": 2,
+        "0.5": 2,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/16ldpau/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 3,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/1m3hj3l/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 4,
+        "0.3": 4,
+        "0.4": 3,
+        "0.5": 4,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/1m3hj3l/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 4,
+        "0.3": 4,
+        "0.4": 3,
+        "0.5": 2,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/l40yvp/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 1,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/l40yvp/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/ldf7um/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/ldf7um/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/ltqmmo/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 1
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/ltqmmo/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 1,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/mf0ar3/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/mf0ar3/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/mg7zib/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/mg7zib/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/mja5fr/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 1,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/mja5fr/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/ndy2dv/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/ndy2dv/6.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/nic2k3/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/nic2k3/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 2,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/o13lvn/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/o13lvn/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/p9krm2/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/p9krm2/2.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/r2x6qr/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/r2x6qr/5.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 2,
+        "0.5": 1,
+        "0.6": 2
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/re1oiq/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 1,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/re1oiq/5.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/rx67bg/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/rx67bg/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 2,
+        "0.3": 2,
+        "0.4": 2,
+        "0.5": 1,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/sz5kmy/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/sz5kmy/1.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/t55vt9/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 1,
+        "0.3": 1,
+        "0.4": 1,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/t55vt9/3.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/tdi4v5/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/tdi4v5/6.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/teezre/0.jpg"
+    },
+    {
+      "flips": {
+        "0.25": 0,
+        "0.3": 0,
+        "0.4": 0,
+        "0.5": 0,
+        "0.6": 0
+      },
+      "image": "/Users/andrew/dev/dregsbane/cleanup-pairs-corpus/data/images/TrashLove/teezre/2.jpg"
+    }
+  ],
+  "rawOutputs": [
+    {
+      "elementsCompared": 240000,
+      "exceedance": [
+        {
+          "absOnly": {
+            "count": 239958,
+            "fraction": 0.999825
+          },
+          "and": {
+            "count": 239958,
+            "fraction": 0.999825
+          },
+          "atol": 1e-05,
+          "combinedIsclose": {
+            "count": 239948,
+            "fraction": 0.9997833333333334
+          },
+          "or": {
+            "count": 239993,
+            "fraction": 0.9999708333333334
+          },
+          "relOnly": {
+            "count": 239993,
+            "fraction": 0.9999708333333334
+          },
+          "rtol": 1e-05
+        },
+        {
+          "absOnly": {
+            "count": 235438,
+            "fraction": 0.9809916666666667
+          },
+          "and": {
+            "count": 235438,
+            "fraction": 0.9809916666666667
+          },
+          "atol": 0.001,
+          "combinedIsclose": {
+            "count": 234890,
+            "fraction": 0.9787083333333333
+          },
+          "or": {
+            "count": 239084,
+            "fraction": 0.9961833333333333
+          },
+          "relOnly": {
+            "count": 239084,
+            "fraction": 0.9961833333333333
+          },
+          "rtol": 0.001
+        },
+        {
+          "absOnly": {
+            "count": 208530,
+            "fraction": 0.868875
+          },
+          "and": {
+            "count": 208530,
+            "fraction": 0.868875
+          },
+          "atol": 0.01,
+          "combinedIsclose": {
+            "count": 205497,
+            "fraction": 0.8562375
+          },
+          "or": {
+            "count": 234823,
+            "fraction": 0.9784291666666667
+          },
+          "relOnly": {
+            "count": 234823,
+            "fraction": 0.9784291666666667
+          },
+          "rtol": 0.01
+        }
+      ],
+      "maxAbsDelta": 3.0011305809020996,
+      "maxRelDelta": 23316.736543143088,
+      "meanAbsDelta": 0.18524576143264845,
+      "meanRelDelta": 4.123799276170877,
+      "medianAbsDelta": 0.10361391305923462,
+      "name": "dets",
+      "p95AbsDelta": 0.6268794754520057,
+      "p999AbsDelta": 1.0910049159527155,
+      "p99AbsDelta": 0.8481110158562661,
+      "p99RelDelta": 31.891957789547572,
+      "perImageMaxAbsDelta": {
+        "max": 3.0011305809020996,
+        "mean": 1.1558916203840637,
+        "min": 0.8049653172492981
+      },
+      "relElementsCompared": 239999,
+      "relElementsSkippedBelowFloor": 1,
+      "relFloor": 1e-06
+    },
+    {
+      "elementsCompared": 2640000,
+      "exceedance": [
+        {
+          "absOnly": {
+            "count": 2639968,
+            "fraction": 0.9999878787878788
+          },
+          "and": {
+            "count": 2639780,
+            "fraction": 0.9999166666666667
+          },
+          "atol": 1e-05,
+          "combinedIsclose": {
+            "count": 2639755,
+            "fraction": 0.999907196969697
+          },
+          "or": {
+            "count": 2639968,
+            "fraction": 0.9999878787878788
+          },
+          "relOnly": {
+            "count": 2639780,
+            "fraction": 0.9999166666666667
+          },
+          "rtol": 1e-05
+        },
+        {
+          "absOnly": {
+            "count": 2637033,
+            "fraction": 0.9988761363636364
+          },
+          "and": {
+            "count": 2617953,
+            "fraction": 0.9916488636363636
+          },
+          "atol": 0.001,
+          "combinedIsclose": {
+            "count": 2614945,
+            "fraction": 0.9905094696969697
+          },
+          "or": {
+            "count": 2637033,
+            "fraction": 0.9988761363636364
+          },
+          "relOnly": {
+            "count": 2617953,
+            "fraction": 0.9916488636363636
+          },
+          "rtol": 0.001
+        },
+        {
+          "absOnly": {
+            "count": 2609942,
+            "fraction": 0.988614393939394
+          },
+          "and": {
+            "count": 2420534,
+            "fraction": 0.9168689393939394
+          },
+          "atol": 0.01,
+          "combinedIsclose": {
+            "count": 2391046,
+            "fraction": 0.9056992424242424
+          },
+          "or": {
+            "count": 2609944,
+            "fraction": 0.9886151515151516
+          },
+          "relOnly": {
+            "count": 2420536,
+            "fraction": 0.916869696969697
+          },
+          "rtol": 0.01
+        }
+      ],
+      "maxAbsDelta": 12.607200622558594,
+      "maxRelDelta": 228.3524064738146,
+      "meanAbsDelta": 0.6580236914978786,
+      "meanRelDelta": 0.09921852727535768,
+      "medianAbsDelta": 0.5052595138549805,
+      "name": "labels",
+      "p95AbsDelta": 1.7880337238311759,
+      "p999AbsDelta": 4.090029729366305,
+      "p99AbsDelta": 2.6547061824798543,
+      "p99RelDelta": 0.4617725669646161,
+      "perImageMaxAbsDelta": {
+        "max": 12.607200622558594,
+        "mean": 5.231999213695526,
+        "min": 2.1836800575256348
+      },
+      "relElementsCompared": 2640000,
+      "relElementsSkippedBelowFloor": 0,
+      "relFloor": 1e-06
+    }
+  ],
+  "schemaVersion": 2
+}
