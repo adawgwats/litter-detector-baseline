@@ -1,0 +1,102 @@
+{
+  "source": {
+    "path": "../roboflow-deliverables/v2.0.1-fp32/rfdetr-s-litter.fp32.onnx",
+    "bytes": 120039167,
+    "sha256": "a59fc4174a770724d537b18797ae1ef64bb47d2ace4704456fa50d9c20f22354"
+  },
+  "architecture": "rfdetr",
+  "targets": [
+    {
+      "target": "rfdetr-s-512-fp32",
+      "architecture": "rfdetr",
+      "precision": "fp32",
+      "io": "fp32",
+      "mechanism": null,
+      "opset": 17,
+      "inputShape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "maxArtifactBytes": null,
+      "repair": false,
+      "validate": false,
+      "action": "source (no conversion)",
+      "status": "ok",
+      "bytes": 120039167,
+      "sha256": "a59fc4174a770724d537b18797ae1ef64bb47d2ace4704456fa50d9c20f22354",
+      "pctOfSource": 100.0,
+      "withinBudget": true
+    },
+    {
+      "target": "rfdetr-s-512-fp16",
+      "architecture": "rfdetr",
+      "precision": "fp16",
+      "io": "fp32",
+      "mechanism": "onnx-graph-fp16",
+      "opset": 17,
+      "inputShape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "maxArtifactBytes": null,
+      "repair": false,
+      "validate": false,
+      "action": "converted",
+      "status": "ok",
+      "bytes": 63068912,
+      "sha256": "29f91b5fa1a14ac6396caeed930bccd0bc869f208ad3289d6ced98fbb19e745a",
+      "pctOfSource": 52.5,
+      "withinBudget": true
+    },
+    {
+      "target": "rfdetr-s-512-fp16-repaired",
+      "architecture": "rfdetr",
+      "precision": "fp16",
+      "io": "fp32",
+      "mechanism": "onnx-graph-fp16",
+      "opset": 17,
+      "inputShape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "maxArtifactBytes": null,
+      "repair": true,
+      "validate": true,
+      "action": "converted",
+      "status": "ok",
+      "bytes": 63068681,
+      "sha256": "ccdddc438a3f301f18e9a39db9741ff505339e7ac47b65f535499d994ce7faab",
+      "pctOfSource": 52.5,
+      "withinBudget": true
+    },
+    {
+      "target": "rfdetr-s-512-int8-dynamic",
+      "architecture": "rfdetr",
+      "precision": "int8",
+      "io": "fp32",
+      "mechanism": "ort-dynamic-quant",
+      "opset": 17,
+      "inputShape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "maxArtifactBytes": null,
+      "repair": false,
+      "validate": true,
+      "action": "converted",
+      "status": "ok",
+      "bytes": 35973010,
+      "sha256": "5d478866ab4204ec97f273c153f13056964e2034b8d8d2c524e5c5f0c102b534",
+      "pctOfSource": 30.0,
+      "withinBudget": true
+    }
+  ]
+}
