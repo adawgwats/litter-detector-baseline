@@ -1,11 +1,11 @@
-# Claude Code kickoff — RF-DETR V2 training run (RTX 4090 box)
+# Claude Code kickoff — RF-DETR V2 training run (RTX 4070 box)
 
 Paste this file's contents as the first prompt to Claude Code on the Windows
 box (or just say: "Read docs/CLAUDE_PC_KICKOFF.md and execute it").
 
 ---
 
-You are on Andrew's Windows machine with an RTX 4090. Your job is to execute
+You are on Andrew's Windows machine with an RTX 4070. Your job is to execute
 `docs/rfdetr_runbook.md` in this repo top to bottom: environment → dataset →
 train RF-DETR Small → eval → export → upload. The runbook is the authority
 for exact commands; this brief adds the constraints and judgment calls.
