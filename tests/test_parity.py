@@ -108,7 +108,10 @@ def test_decode_is_query_aligned() -> None:
 def test_manifest_ignores_comments_and_blank_lines(tmp_path) -> None:
     p = tmp_path / "fx.txt"
     p.write_text("# header\n\n/a/b.jpg\n\n# note\n/c/d.jpg\n", encoding="utf-8")
-    assert [str(x) for x in read_fixture_manifest(p)] == ["/a/b.jpg", "/c/d.jpg"]
+    # as_posix(), not str(): on Windows str(Path("/a/b.jpg")) is "\\a\\b.jpg"
+    # and this assertion fails for a reason that has nothing to do with
+    # comment or blank-line handling, which is what it is meant to test.
+    assert [x.as_posix() for x in read_fixture_manifest(p)] == ["/a/b.jpg", "/c/d.jpg"]
 
 
 def test_manifest_with_no_images_is_an_error(tmp_path) -> None:
