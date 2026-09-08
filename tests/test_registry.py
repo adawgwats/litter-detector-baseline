@@ -21,6 +21,7 @@ No test here asserts a divergence tolerance. The registry does not own one.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -754,3 +755,108 @@ def test_read_onnx_facts_reads_shapes_dtypes_and_weights(tmp_path: Path) -> None
     assert facts.output_specs[0].name == "dets"
     assert facts.weight_bytes_by_dtype == {"FLOAT16": 32}  # 16 elements x 2 bytes
     assert infer_precision_from_weights(facts.weight_bytes_by_dtype) == "fp16"
+
+
+# --------------------------------------------------------------------------
+# one source, many targets — the case a release registry exists to hold
+#
+# identity() has always included the target, but uniqueness was once keyed on
+# (model, version) alone. That made the module contradict itself: two builds
+# of one model for two different targets were two releases by identity() and
+# a collision by the uniqueness rule. These lock the resolution in place.
+# --------------------------------------------------------------------------
+
+GPU_TARGET = Target(
+    "tensorrt", "11.2.1.2", "cuda",
+    "windows-x86_64-rtx4070",
+    compute_capability="8.9",
+    cuda_version="12.4",
+    driver_version="591.86",
+)
+
+
+def test_two_targets_of_one_model_version_can_both_be_registered(tmp_path: Path) -> None:
+    """The ONNX and the engine built FROM it are two releases, not a collision."""
+    reg = Registry(tmp_path / "registry")
+
+    onnx_report = write_report(tmp_path, name="onnx.json", sha_b=SHA_B)
+    onnx_rec = make_record(tmp_path, report=onnx_report)
+
+    engine_report = write_report(tmp_path, name="engine.json", sha_b=SHA_C)
+    engine_rec = make_record(
+        tmp_path,
+        report=engine_report,
+        artifact_sha256=SHA_C,
+        artifact_path="dist/trt/engine.plan",
+        target=GPU_TARGET,
+    )
+
+    # Same model, same version string, same precision — different target.
+    assert onnx_rec.model_name == engine_rec.model_name
+    assert onnx_rec.version == engine_rec.version
+    assert onnx_rec.record_id != engine_rec.record_id
+
+    reg.register(onnx_rec)
+    reg.register(engine_rec)          # must NOT raise
+    assert len(reg.records()) == 2
+
+
+def test_same_target_two_artifacts_still_collides(tmp_path: Path) -> None:
+    """Widening the key must not lose the S3-overwrite defect it was built for."""
+    reg = Registry(tmp_path / "registry")
+    reg.register(make_record(tmp_path, report=write_report(tmp_path, name="one.json")))
+
+    other = make_record(
+        tmp_path,
+        report=write_report(tmp_path, name="two.json", sha_b=SHA_C),
+        artifact_sha256=SHA_C,
+    )  # identical target, different bytes, same version
+    with pytest.raises(VersionCollisionError, match="SAME TARGET"):
+        reg.register(other)
+
+
+def test_accelerator_identity_is_part_of_the_target_digest() -> None:
+    """A GPU target differing only in driver is a different target."""
+    other_driver = replace(GPU_TARGET, driver_version="600.00")
+    assert GPU_TARGET.digest != other_driver.digest
+
+
+def test_absent_accelerator_fields_are_omitted_from_the_json() -> None:
+    """Omission, not null — so record ids written before these fields existed
+    still hash to the same value."""
+    cpu = Target("onnxruntime", "1.29.0", "CPUExecutionProvider", "macOS-arm64")
+    assert cpu.to_json_obj() == {
+        "runtime": "onnxruntime",
+        "runtimeVersion": "1.29.0",
+        "executionProvider": "CPUExecutionProvider",
+        "hostClass": "macOS-arm64",
+    }
+
+
+def test_opaque_evidence_is_distinguishable_from_absent_evidence(tmp_path: Path) -> None:
+    """"Cannot be inspected" must not be storable as "was not inspected"."""
+    ev = PrecisionEvidence.opaque("tensorrt plan: weights are not inspectable")
+    assert ev.implied_precision is None
+    assert ev.weight_bytes_by_dtype == {}
+    assert "opaqueReason" in ev.to_json_obj()
+
+    # round-trips, and stays distinguishable from a plain null
+    back = PrecisionEvidence.from_json_obj(ev.to_json_obj())
+    assert back is not None and back.opaque_reason == ev.opaque_reason
+    assert PrecisionEvidence.from_json_obj(None) is None
+
+    # an ordinary inspected record still serialises without the marker
+    plain = PrecisionEvidence({"FLOAT": 113931968}, "fp32")
+    assert "opaqueReason" not in plain.to_json_obj()
+
+
+def test_transcribing_a_non_ort_report_is_refused(tmp_path: Path) -> None:
+    """It would otherwise record runtime='onnxruntime' for a TensorRT run."""
+    doc = json.loads(write_report(tmp_path, name="trt.json").read_text())
+    del doc["environment"]["onnxruntime"]           # a TensorRT-shaped report
+    doc["environment"]["tensorrt"] = "11.2.1.2"
+    p = tmp_path / "trt.json"
+    p.write_text(json.dumps(doc))
+
+    with pytest.raises(ValueError, match="not made under it"):
+        parity_ref_from_report(p, "candidate", root=tmp_path)

@@ -316,12 +316,33 @@ class PrecisionEvidence:
 
     weight_bytes_by_dtype: dict[str, int]
     implied_precision: str | None
+    #: Set when the artifact's precision CANNOT be derived from its bytes —
+    #: a TensorRT plan, or any other opaque build product. This is not the
+    #: same state as ``precision_evidence=None``, which means "nobody looked".
+    #: Collapsing the two would let "we cannot check this" masquerade as "we
+    #: forgot to check this", and the derived-not-declared guarantee would
+    #: silently stop applying exactly where it is least verifiable.
+    opaque_reason: str | None = None
+
+    @staticmethod
+    def opaque(reason: str) -> "PrecisionEvidence":
+        """Evidence that there is no evidence, and why.
+
+        For an artifact whose weights are not inspectable — a serialized
+        engine plan, for instance. The declared precision then rests on the
+        build recipe recorded in ``Conversion``, and the record says so
+        instead of implying an inspection happened.
+        """
+        return PrecisionEvidence({}, None, opaque_reason=reason)
 
     def to_json_obj(self) -> dict[str, Any]:
-        return {
+        o: dict[str, Any] = {
             "weightBytesByDtype": dict(self.weight_bytes_by_dtype),
             "impliedPrecision": self.implied_precision,
         }
+        if self.opaque_reason is not None:
+            o["opaqueReason"] = self.opaque_reason
+        return o
 
     @staticmethod
     def from_json_obj(o: dict[str, Any] | None) -> "PrecisionEvidence | None":
@@ -330,6 +351,7 @@ class PrecisionEvidence:
         return PrecisionEvidence(
             weight_bytes_by_dtype=dict(o["weightBytesByDtype"]),
             implied_precision=o["impliedPrecision"],
+            opaque_reason=o.get("opaqueReason"),
         )
 
 
@@ -384,14 +406,41 @@ class Target:
     runtime_version: str
     execution_provider: str
     host_class: str
+    # Accelerator identity. Optional because a CPU target has none, and
+    # because OMITTING them when absent keeps the JSON — and therefore every
+    # record_id written before these existed — byte-identical. A GPU target
+    # that packed these into host_class would put them in the digest by string
+    # concatenation; as fields they are addressable and comparable.
+    compute_capability: str | None = None
+    cuda_version: str | None = None
+    driver_version: str | None = None
 
     def to_json_obj(self) -> dict[str, Any]:
-        return {
+        o: dict[str, Any] = {
             "runtime": self.runtime,
             "runtimeVersion": self.runtime_version,
             "executionProvider": self.execution_provider,
             "hostClass": self.host_class,
         }
+        if self.compute_capability is not None:
+            o["computeCapability"] = self.compute_capability
+        if self.cuda_version is not None:
+            o["cudaVersion"] = self.cuda_version
+        if self.driver_version is not None:
+            o["driverVersion"] = self.driver_version
+        return o
+
+    @property
+    def digest(self) -> str:
+        """Content address of the target alone.
+
+        Uniqueness is keyed on (model, version, THIS) rather than on
+        (model, version). identity() has always included the target, so
+        keying uniqueness on less than that made the module contradict
+        itself: two engines built from one ONNX for different targets are
+        two releases by identity() and a collision by the uniqueness rule.
+        """
+        return hashlib.sha256(canonical_bytes(self.to_json_obj())).hexdigest()
 
     @staticmethod
     def from_json_obj(o: dict[str, Any]) -> "Target":
@@ -400,6 +449,9 @@ class Target:
             runtime_version=o["runtimeVersion"],
             execution_provider=o["executionProvider"],
             host_class=o["hostClass"],
+            compute_capability=o.get("computeCapability"),
+            cuda_version=o.get("cudaVersion"),
+            driver_version=o.get("driverVersion"),
         )
 
 
@@ -510,6 +562,21 @@ def parity_ref_from_report(
             "imagesWithAnyFlip": recommended["imagesWithAnyFlip"],
         }
 
+    # Do not assume the measurement was made under ONNX Runtime. This helper
+    # transcribes an export.parity report, which is ORT-shaped; a report from
+    # another runtime (a TensorRT engine comparison, say) carries a different
+    # environment block and, often, no byThreshold[]. Stamping
+    # runtime="onnxruntime" on one of those would put a false claim inside a
+    # record whose entire purpose is provenance. Refuse instead, and let the
+    # caller build the ParityRef explicitly.
+    if "onnxruntime" not in env:
+        raise ValueError(
+            f"{report_path}: no environment.onnxruntime — this does not look "
+            f"like an export.parity report, and this helper would otherwise "
+            f"record runtime='onnxruntime' for a measurement that was not made "
+            f"under it. Construct the ParityRef directly and name the runtime "
+            f"that actually produced the numbers."
+        )
     eps = env.get("executionProviders") or [None]
     measured_on = {
         "runtime": "onnxruntime",
@@ -841,20 +908,35 @@ class Registry:
         """
         existing = {r.record_id: r for r in self.records()}
 
-        # (model, version) may name exactly one artifact. This is the S3-key
-        # overwrite, caught here.
+        # (model, version, target) may name exactly one artifact. The S3-key
+        # overwrite this was built to catch happens WITHIN a target, and is
+        # still caught.
+        #
+        # The target belongs in this key because identity() has always
+        # included it. Keying uniqueness on (model, version) alone made the
+        # module contradict itself: an ONNX artifact and the TensorRT engine
+        # built FROM it are two releases by identity() — different record_ids
+        # — and were a collision by this rule. So were two engines built from
+        # one ONNX for different targets (TF32 on vs off), which is exactly
+        # the one-source-many-targets case a release registry exists to hold.
+        # A version string names a MODEL VERSION, not a build of it.
         for other in existing.values():
             if (
                 other.model_name == record.model_name
                 and other.version == record.version
+                and other.target.digest == record.target.digest
                 and other.artifact_sha256 != record.artifact_sha256
             ):
                 raise VersionCollisionError(
-                    f"{record.model_name} {record.version} is already "
-                    f"registered as artifact {other.artifact_sha256[:12]}… "
-                    f"(record {other.short_id}); this artifact is "
-                    f"{record.artifact_sha256[:12]}…. One version string "
-                    f"cannot name two sets of bytes — rev the version"
+                    f"{record.model_name} {record.version} on target "
+                    f"{other.target.runtime}/{other.target.execution_provider}"
+                    f"@{other.target.runtime_version} is already registered as "
+                    f"artifact {other.artifact_sha256[:12]}… (record "
+                    f"{other.short_id}); this artifact is "
+                    f"{record.artifact_sha256[:12]}…. One version string cannot "
+                    f"name two sets of bytes FOR THE SAME TARGET — rev the "
+                    f"version, or register under the target it was actually "
+                    f"built for"
                 )
 
         prior = existing.get(record.record_id)
