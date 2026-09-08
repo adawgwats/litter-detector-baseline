@@ -1,0 +1,73 @@
+{
+  "builtAt": "2026-09-08T04:04:01+00:00",
+  "source": {
+    "onnx": "C:\\tmp\\dist\\models\\v2.0.1-fp32\\rfdetr-s-litter.onnx",
+    "onnxSha256": "c055e87cd7109def1d3cfebd47f0b358f73e3d13124fad23400eaddd8b1cd437",
+    "onnxBytes": 120111594
+  },
+  "builder": {
+    "tf32": true,
+    "stronglyTyped": false,
+    "workspaceBytes": 4294967296,
+    "builderOptimizationLevel": 3,
+    "avgTimingIterations": 1,
+    "flagsSet": [
+      "TF32"
+    ],
+    "timingCacheIn": null,
+    "timingCacheInBytes": null
+  },
+  "environment": {
+    "tensorrt": "11.2.1.2",
+    "driver": "591.86",
+    "python": "3.12.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "machine": "AMD64",
+    "gpu": "NVIDIA GeForce RTX 4070",
+    "computeCapability": "8.9",
+    "multiProcessorCount": 46,
+    "totalGlobalMemBytes": 12878086144,
+    "cudaRuntime": "13.1"
+  },
+  "plan": {
+    "bytes": 119657980,
+    "sha256": "49007232e64a183617fdb70d60d03272e997a7aa93d5eae2c0faf25efdc660f0",
+    "path": "C:\\tmp\\dist\\trt\\fp32_tf32_a3.plan"
+  },
+  "buildSeconds": 15.58,
+  "network": {
+    "numLayers": 3863,
+    "inputs": [
+      {
+        "name": "input",
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ],
+        "dtype": "DataType.FLOAT"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "dets",
+        "shape": [
+          1,
+          300,
+          4
+        ],
+        "dtype": "DataType.FLOAT"
+      },
+      {
+        "name": "labels",
+        "shape": [
+          1,
+          300,
+          44
+        ],
+        "dtype": "DataType.FLOAT"
+      }
+    ]
+  }
+}

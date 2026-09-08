@@ -40,6 +40,19 @@ parity = [
     "onnxconverter-common>=1.14",
     "Pillow>=10.0",
 ]
+trt = [
+    # TensorRT engine build + engine-vs-ONNX parity (export/trt_build.py,
+    # export/trt_parity.py). Deliberately NOT required, and deliberately
+    # separate from `parity`: this pulls a CUDA-linked toolchain that only
+    # resolves on an NVIDIA host, while `parity` must stay installable on
+    # the arm64/CPU machines that run the reference backend.
+    "tensorrt>=10",
+    "cuda-python>=12",
+    "polygraphy>=0.49",
+    "onnxruntime-gpu>=1.18",
+    "onnx>=1.16",
+    "Pillow>=10.0",
+]
 dev = [
     "pytest>=8.0",
     "boto3>=1.34",
