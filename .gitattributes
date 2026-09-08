@@ -16,8 +16,20 @@
 # and no pinned hash is invalidated. It constrains future checkouts and
 # future registrations.
 #
-# An existing CRLF working tree needs a one-time `git add --renormalize .`
-# or a fresh checkout to pick this up.
+# CONVERTING AN EXISTING CRLF WORKING TREE — and `git add --renormalize .`
+# is NOT the command, despite being the usual advice. Measured on a Windows
+# checkout: --renormalize re-stages blobs under the current attributes, and
+# every blob here is already LF, so it is a no-op. `git checkout-index -f -a`
+# is a no-op too: under core.autocrlf a CRLF working file is considered
+# unchanged against its LF blob, so git sees nothing to do. Both commands
+# report success and convert nothing, which sends you round the loop —
+# run it, see no change, run verify, still get CHANGED.
+#
+# What works is deleting the files so git has to write them again:
+#
+#     git ls-files -z | xargs -0 rm -f && git checkout -- .
+#
+# A fresh clone gets it right with no intervention.
 
 * text=auto eol=lf
 
