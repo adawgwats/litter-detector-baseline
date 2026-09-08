@@ -19,8 +19,11 @@ jobs:
           python-version: '3.12'
       - run: pip install -e ".[dev,parity]"
 
+      # `python -m pytest`, not bare `pytest`: only the -m form puts the working
+      # directory on sys.path, and export/ lives at the repo root — the
+      # packaging config exposes src/ only, so a bare pytest cannot import it.
       - name: Unit tests
-        run: pytest tests/ -q
+        run: python -m pytest tests/ -q
 
       # A check that never fires in a test is a comment, not a gate. These are
       # the refusals this repo relies on; assert each is actually asserted
