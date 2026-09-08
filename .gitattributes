@@ -1,0 +1,43 @@
+# Line endings are part of a content address here, so they cannot be left to
+# the platform.
+#
+# export/registry.py pins `reportSha256` over the BYTES of a parity report,
+# and `verify` re-hashes the file in the working tree. With no policy, a
+# checkout on a machine with core.autocrlf=true renders an LF blob as CRLF,
+# so the same commit produces different bytes on different machines. That
+# broke both ways: two engine records were registered on Windows and pinned
+# the CRLF rendering (fixed in 08cd747), and `verify` on that same checkout
+# still disagreed with an LF pin afterwards — the write side and the read
+# side were each hashing a local rendering rather than the file.
+#
+# Forcing eol=lf makes the working tree match the blob on every platform, so
+# a hash taken anywhere is the hash of the same content. Every committed blob
+# is already LF, so this changes nothing that exists: no blob is rewritten
+# and no pinned hash is invalidated. It constrains future checkouts and
+# future registrations.
+#
+# An existing CRLF working tree needs a one-time `git add --renormalize .`
+# or a fresh checkout to pick this up.
+
+* text=auto eol=lf
+
+*.json  text eol=lf
+*.md    text eol=lf
+*.py    text eol=lf
+*.txt   text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.toml  text eol=lf
+*.cfg   text eol=lf
+*.sh    text eol=lf
+
+# Model artifacts and archives are bytes, never text. Normalising one would
+# corrupt it, and these are the files whose hashes matter most.
+*.onnx    binary
+*.plan    binary
+*.engine  binary
+*.pt      binary
+*.pth     binary
+*.gz      binary
+*.png     binary
+*.jpg     binary

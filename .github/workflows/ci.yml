@@ -46,6 +46,44 @@ jobs:
       # Recomputes record_id from the identity block. Catches a hand-edited
       # record. Deliberately does NOT hash the artifacts — they are 36-120 MB
       # and live in S3, so that check belongs to the release gate, not here.
+      # The identity check below catches a hand-edited record. It does NOT
+      # catch a wrong parity pin, and that gap let two engine records sit with
+      # reportSha256 hashes taken over a CRLF rendering of an LF file. Note
+      # this runner is POSIX, so it would have passed them before .gitattributes
+      # forced eol=lf — a POSIX-only check is necessary and not sufficient,
+      # which is why both landed together.
+      - name: Parity pins match the reports they name
+        run: |
+          python - <<'PY'
+          import glob, hashlib, json, pathlib, sys
+          bad = []
+          for f in sorted(glob.glob("registry/*.json")):
+              rec = json.load(open(f))
+              par = rec.get("parity") or {}
+              rep = pathlib.Path(par.get("report", ""))
+              if not rep.exists():
+                  bad.append((f, f"parity report not found: {rep}"))
+                  continue
+              got = hashlib.sha256(rep.read_bytes()).hexdigest()
+              if got != par.get("reportSha256"):
+                  bad.append((f, f"pinned {par.get('reportSha256','')[:12]} but {rep} hashes to {got[:12]}"))
+          for f, why in bad:
+              print(f"::error file={f}::{why}")
+          print(f"{len(glob.glob('registry/*.json'))} parity pins checked")
+          sys.exit(1 if bad else 0)
+          PY
+
+      # Guards the guard: if this file stops forcing LF, every hash above
+      # becomes platform-dependent again and the checks go quietly green on
+      # a POSIX runner while failing on a Windows checkout.
+      - name: Line-ending policy is still in force
+        run: |
+          set -euo pipefail
+          test -f .gitattributes || { echo "::error::.gitattributes is gone — hashes become platform-dependent"; exit 1; }
+          grep -qE '^\*\.json[[:space:]]+text[[:space:]]+eol=lf' .gitattributes \
+            || { echo "::error::.gitattributes no longer pins *.json to eol=lf"; exit 1; }
+          echo "eol=lf policy present"
+
       - name: Registry records match their own digests
         run: |
           python - <<'PY'
