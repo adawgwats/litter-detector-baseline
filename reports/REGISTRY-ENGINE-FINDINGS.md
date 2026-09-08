@@ -266,3 +266,36 @@ no gain today, with nothing forcing the decision. So it is left as a stated open
 item with its fix named, not a rushed schema edit: the honest position is "the
 registry cannot yet distinguish an artifact we deliberately do not retain from
 one that is gone, and here is the field that would fix it."
+
+### Postscript — a content address computed over a local rendering isn't one
+
+The two engine records above shipped with a real defect, and the registry caught
+it on its own evidence. Each pinned `reportSha256` over the bytes of its parity
+report *as rendered in the working tree it was registered from* — Windows, CRLF
+line endings — while git stored the blob as LF. `export.registry verify` re-hashes
+the report on disk, so on an LF checkout the pin disagreed with the file and every
+engine record read as `CHANGED`.
+
+It was fixed in two commits, and the two-step is the point:
+
+1. **Re-pin to the LF blob hash** (`08cd747`) fixed the *write* side — the pin now
+   names the committed bytes.
+2. **A line-ending policy** (`.gitattributes`, `* text=auto eol=lf`, `f70f9f8`)
+   fixed the *read* side — `verify` now hashes LF bytes on every platform, because
+   the working tree matches the blob regardless of `core.autocrlf`.
+
+Re-pinning alone was not enough: between those two commits, `verify` on a Windows
+checkout still reported `CHANGED` on records that were correct, because the
+*reader* was platform-dependent even after the *pin* was fixed. **Both sides were
+hashing a local rendering of the file rather than the file.** A content address is
+only an address if the bytes it is taken over are the same everywhere; line
+endings are part of those bytes, so they cannot be left to the platform. Every
+committed blob was already LF, so the policy rewrote nothing and invalidated no
+pin — it only makes future checkouts and future registrations deterministic. Two
+CI steps now guard it: one checks that every `reportSha256` matches the report it
+names (the identity check never looked at the pins, which is what let these two
+sit), and one checks that the line-ending policy is still in force — because a
+POSIX-only `verify` in CI passes CRLF pins happily, so it is necessary but not
+sufficient. (An existing CRLF working tree needs a one-time `git add
+--renormalize .`, or a delete-and-re-checkout of the tracked files — a plain
+`git checkout -- .` skips files git considers unchanged under autocrlf.)
