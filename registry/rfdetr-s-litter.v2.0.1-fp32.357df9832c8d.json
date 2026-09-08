@@ -1,0 +1,108 @@
+{
+  "artifactPath": "dist/trt/fp32_notf32.plan",
+  "identity": {
+    "architecture": "rfdetr",
+    "artifact": {
+      "bytes": 118556796,
+      "sha256": "9eb7a83f26fc2167bb8613f08c9dd28385d51969f1ccf14298ac36867f203d3f"
+    },
+    "classes": {
+      "count": 43,
+      "sha256": "00b96ef3f59d7da7d2ea49ff4be8dae6867fbe2611db16f6663b35aecfb531ca"
+    },
+    "conversion": {
+      "exporter": "export.trt_build.build_engine",
+      "mechanism": "tensorrt-11.2.1.2-build (onnx->plan, TF32=False)",
+      "opset": 17,
+      "sourceCheckpointSha256": null,
+      "sourceSha256": "c055e87cd7109def1d3cfebd47f0b358f73e3d13124fad23400eaddd8b1cd437"
+    },
+    "io": {
+      "input": {
+        "dtype": "FLOAT",
+        "name": "input",
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ]
+      },
+      "outputs": [
+        {
+          "dtype": "FLOAT",
+          "name": "dets",
+          "shape": [
+            1,
+            300,
+            4
+          ]
+        },
+        {
+          "dtype": "FLOAT",
+          "name": "labels",
+          "shape": [
+            1,
+            300,
+            44
+          ]
+        }
+      ]
+    },
+    "modelName": "rfdetr-s-litter",
+    "precision": "fp32",
+    "target": {
+      "computeCapability": "8.9",
+      "cudaVersion": "13.1",
+      "driverVersion": "591.86",
+      "executionProvider": "cuda",
+      "hostClass": "desktop-rtx4070-windows",
+      "runtime": "tensorrt",
+      "runtimeVersion": "11.2.1.2"
+    },
+    "thresholds": {
+      "confRecommended": 0.4,
+      "iouRecommended": 0.45
+    }
+  },
+  "measuredOnTarget": false,
+  "notes": [
+    "TensorRT 11.2.1.2 engine on NVIDIA GeForce RTX 4070 sm8.9; desktop GPU, not an Orin/embedded target"
+  ],
+  "parity": {
+    "artifactSha256": "9eb7a83f26fc2167bb8613f08c9dd28385d51969f1ccf14298ac36867f203d3f",
+    "comparedAgainstSha256": "c055e87cd7109def1d3cfebd47f0b358f73e3d13124fad23400eaddd8b1cd437",
+    "comparison": {
+      "atRecommendedThreshold": {
+        "classFlips": 0,
+        "detectionsA": 183,
+        "detectionsB": 183,
+        "threshold": 0.4,
+        "thresholdFlips": 0
+      },
+      "maxAbsDeltaByOutput": {
+        "dets": 0.8680833056569099,
+        "labels": 2.713611125946045
+      }
+    },
+    "confThreshold": 0.4,
+    "measuredOn": {
+      "executionProvider": "cuda",
+      "host": "Windows-11-10.0.26200-SP0",
+      "runtime": "tensorrt",
+      "runtimeVersion": "11.2.1.2"
+    },
+    "report": "reports/trt-parity-fp32-vs-engine-tf32off.json",
+    "reportSha256": "da34886d424be62aa72d2b7a28f43e6bcb23758c1a4b5241cc1b4c0a50e7cfcc",
+    "role": "candidate"
+  },
+  "precisionEvidence": {
+    "impliedPrecision": null,
+    "opaqueReason": "tensorrt plan: weights are not inspectable",
+    "weightBytesByDtype": {}
+  },
+  "recordId": "357df9832c8da5ad68afe9cba2b05509b11ffa87399d9888bce73b95c344b95a",
+  "registeredAt": "2026-09-08T07:15:47+00:00",
+  "schemaVersion": 1,
+  "version": "v2.0.1-fp32"
+}
