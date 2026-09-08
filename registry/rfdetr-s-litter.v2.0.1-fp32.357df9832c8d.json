@@ -93,7 +93,7 @@
       "runtimeVersion": "11.2.1.2"
     },
     "report": "reports/trt-parity-fp32-vs-engine-tf32off.json",
-    "reportSha256": "da34886d424be62aa72d2b7a28f43e6bcb23758c1a4b5241cc1b4c0a50e7cfcc",
+    "reportSha256": "7f603445d9d489e2f4ba1b0993d62c559b4679a327db119e70c0bc2eec0fef4d",
     "role": "candidate"
   },
   "precisionEvidence": {
