@@ -286,19 +286,94 @@ against its source ONNX is the same measurement with a different
 `InferenceSession`, and `export/parity.py` takes its execution provider
 as a parameter.
 
-**Also not done:** unifying the two exporters' precision paths. They
-still use two different fp16 mechanisms with two different IO
-boundaries — `export_rfdetr.py` via `onnxconverter_common` with
-`keep_io_types=True` (an explicit decision), `export_yolov8.py` via
-ultralytics `{'half': True}` (where the boundary is not a decision at
-all). §2 is an argument for doing that work, since the RF-DETR path's
-defects were invisible partly because nothing shared code with a path
-that gets exercised.
+**Since done, see §4a:** unifying the two exporters' precision paths.
 
 **Pre-existing, untouched:** `tests/test_smoke.py` has two failures
 unrelated to this work — `assert det.score == 0.9` against a float32
 round-trip that yields 0.8999999761581421. They were failing before any
 change here and are left alone.
+
+---
+
+## 4a. Result: one conversion path, and the bytes are unchanged
+
+The two exporters used two different fp16 mechanisms with two different
+IO boundaries, and only one of the two boundaries had ever been chosen:
+
+| | mechanism | graph IO | was it a decision? |
+|---|---|---|---|
+| `export_rfdetr.py` | `onnxconverter_common.float16` | fp32 | yes — `keep_io_types=True`, so the Lambda session keeps feeding float32 |
+| `export_yolov8.py` | ultralytics `half=True` | **fp16** | no — ultralytics halves the module before tracing, and the boundary follows |
+
+Both are now `export/precision.py`. A target is a descriptor —
+precision, IO precision, mechanism, opset, input shape, size budget,
+backend, architecture — `plan()` is the only function that decides how a
+precision is realised, and `convert()` is the only implementation of one.
+The exporters keep their architecture-specific work and hold no
+precision policy: RF-DETR passes `plan().backend_kwargs` (empty, since
+rfdetr has no precision argument) and calls `convert()` afterwards;
+ultralytics passes `{'half': …}` from the same field and calls the same
+`convert()`, which is a no-op for its two shipped targets.
+
+**The measurement that matters.** Nothing about the shipped artifacts
+changed. Same source, same command, before and after:
+
+| | sha256 | bytes |
+|---|---|---|
+| source `rfdetr-s-litter.fp32.onnx` | `a59fc417…c20f22354` | 120,039,167 |
+| fp16, pre-refactor | `ccdddc43…4ce7faab` | 63,068,681 |
+| fp16, post-refactor | `ccdddc43…4ce7faab` | 63,068,681 |
+| int8-dynamic, pre-refactor | `5d478866…0c102b534` | 35,973,010 |
+| int8-dynamic, post-refactor | `5d478866…0c102b534` | 35,973,010 |
+
+Byte-identity is only evidence if the conversion is deterministic in the
+first place, so that was checked separately: two pre-refactor runs of
+`scripts/make_fp16.py` on the same input produced the same digest. On
+this toolchain (onnx 1.22.0, onnxconverter-common 1.16.0, onnxruntime
+1.29.0, macOS/CPU) the conversion is reproducible, and the match above
+therefore says the refactor changed nothing rather than saying two
+random draws collided.
+
+What preserved the bytes was preserving the *operation order*, not just
+the arguments: convert-and-save, then a separate load-repair-and-save-
+if-changed. That is what `scripts/make_fp16.py` did before, and
+collapsing it into one save was the obvious tidy-up and is exactly the
+kind of change that would have silently reserialized the graph.
+
+**One discrepancy was found and deliberately not fixed.** The two fp16
+recipes in this repository are not the same recipe:
+`export_rfdetr.export()` runs the conversion and stops;
+`scripts/make_fp16.py` runs the conversion, then `export/fp16_repair`,
+then the ORT load gate. §2 is the consequence — the exporter's artifact
+does not load. Rather than quietly making the exporter match, both are
+now descriptors, `rfdetr-s-512-fp16` and `rfdetr-s-512-fp16-repaired`,
+differing in exactly two fields (a test asserts *exactly* those two).
+Changing which one the exporter ships changes an artifact's bytes, which
+is a release decision and not a refactor. It remains recommendation 5 in
+§5.
+
+### What this licenses
+
+That precision conversion now happens in one place, that the IO boundary
+is a declared field in both paths, and that the two artifacts this
+repository can actually build — fp16 and dynamic-int8 RF-DETR — are
+byte-identical across the change on this toolchain.
+
+It does **not** license a claim about the YOLO path's bytes. Ultralytics
+is not installed here and no YOLO checkpoint was available, so
+`export_yolov8.export()` was not run end to end before or after. What is
+verified there is narrower: the kwargs it hands ultralytics are
+unchanged (`{'half': False}` / `{'half': True}`), its opset and size
+budget are unchanged, and its `convert()` call is a no-op for both
+shipped targets by construction. A first re-export of a real YOLO
+checkpoint should be hash-compared before trusting that path.
+
+It also does not license "adding a target is free." It licenses the
+narrower claim the acceptance criterion asks for: a third target was
+added — `yolo11n-640-fp16-io-fp32`, an fp16 YOLO artifact holding an
+fp32 boundary, which ultralytics cannot produce — and it required a new
+dict entry and no new script, function or branch. Whether it *works* is
+untested; nothing has run it.
 
 ---
 
@@ -345,14 +420,26 @@ To make it gate, in rough order of what each step buys:
 |---|---|
 | `export/parity.py` | The harness. Raw-tensor + operating-point comparison, JSON + human report, regression gate. |
 | `export/fp16_repair.py` | Repairs the two converter defects that make the fp16 artifact unloadable; `validate_loadable` is the real check. |
-| `scripts/make_fp16.py` | Produces an fp16 artifact via the shipping `_to_fp16`, then repairs and validates it. |
+| `export/precision.py` | The shared conversion path and the target matrix. `plan()` decides how a precision is realised; `convert()` is the only implementation. Seven descriptors. |
+| `scripts/make_fp16.py` | Produces an fp16 artifact via the `rfdetr-s-512-fp16-repaired` descriptor, then repairs and validates it. |
 | `scripts/build_parity_fixtures.py` | Deterministic fixture manifest from the cleanup-pairs corpus. |
 | `tests/test_export_rfdetr.py` | 18 tests. `_check_class_alignment` now demonstrably raises on reordering, warns on a missing config, and is bypassable only via the explicit flag. |
 | `tests/test_parity.py` | 21 tests over the decode mirror, the manifest reader, the regression gate, and the repair. |
+| `tests/test_precision.py` | 71 tests. Every refusal is asserted to fire, including the one that motivates the module: asking ultralytics for an fp32 IO boundary. The fp16 boundary is exercised both ways against a real graph. |
 | `reports/parity-rfdetr-v2.0.1-fp32-vs-fp16.json` | The machine-readable result behind §3. |
 | `reports/parity-rfdetr-v2.0.1-fp32-vs-fp16-blocked.json` | The second recipe, §3a. |
 | `reports/parity-fixtures-v1.txt` | The fixture manifest, seed 0. |
 
 `pyproject.toml` gains a `parity` optional extra. Nothing was added to
-the required dependency set. No serving path, no shipped artifact, and
-no exporter behaviour was changed.
+the required dependency set. No serving path and no shipped artifact was
+changed, and the artifacts the exporters produce are byte-identical
+(§4a).
+
+Two changes to exporter *behaviour* are worth naming rather than
+glossing, since neither shows up in a hash. The size-budget refusal and
+the resolution-divisibility refusal now raise `UnsupportedTargetError`
+instead of `RuntimeError` and a bare `ValueError`; that class subclasses
+`ValueError`, so both CLIs still catch it and exit 1 with the message,
+and a test asserts the subclassing so it stays that way. And when a
+caller passes both a bad resolution and `-int8`, the shape complaint now
+arrives first. Nothing else about either exporter's control flow moved.

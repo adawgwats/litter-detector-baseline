@@ -59,6 +59,7 @@ from export.export_yolov8 import (
     _read_training_metrics,
     _validate_version,
 )
+from export.precision import convert, plan, target_for
 
 LOG = logging.getLogger("export.export_rfdetr")
 
@@ -105,20 +106,25 @@ def _check_class_alignment(checkpoint: Path, classes: list[str]) -> None:
 def _to_fp16(onnx_path: Path) -> None:
     """Convert the exported fp32 graph to fp16 in place.
 
-    keep_io_types=True keeps input/output tensors fp32 so the backend's
-    ORT session feeds/reads float32 like it does for the YOLO model.
+    The conversion itself now lives in :mod:`export.precision`, which is
+    the single place any precision conversion happens and where the IO
+    boundary is an explicit field rather than a hard-coded keyword. This
+    function is the shim that keeps that call site's *behaviour*
+    identical: ``rfdetr-s-512-fp16`` declares ``io_precision=fp32``
+    (i.e. ``keep_io_types=True``, so the backend's ORT session keeps
+    feeding and reading float32) with ``repair``/``validate`` off,
+    which is exactly what this exporter did before.
+
+    That the shipping exporter neither repairs nor validates is a known
+    defect, not a design choice — reports/CONVERSION-REPORT.md §2 shows
+    the resulting artifact does not load in ONNX Runtime. Fixing it
+    changes an artifact's bytes and so is a release decision; the
+    descriptor that does fix it is ``rfdetr-s-512-fp16-repaired``, and
+    it is what ``scripts/make_fp16.py`` uses.
     """
-    try:
-        import onnx
-        from onnxconverter_common import float16
-    except ImportError as exc:
-        raise RuntimeError(
-            "fp16 export needs onnx + onnxconverter-common: "
-            "pip install onnx onnxconverter-common"
-        ) from exc
-    model = onnx.load(str(onnx_path))
-    model_fp16 = float16.convert_float_to_float16(model, keep_io_types=True)
-    onnx.save(model_fp16, str(onnx_path))
+    from export.precision import convert, get_target, plan
+
+    convert(plan(get_target("rfdetr-s-512-fp16")), onnx_path)
 
 
 def _gzip_alongside(onnx_path: Path) -> Path:
@@ -151,16 +157,17 @@ def export(
 
     _validate_version(version)
     precision = version.rsplit("-", 1)[1]
-    if precision == "int8":
-        raise NotImplementedError(
-            "INT8 export requires a calibration pass; not wired for V2. "
-            "Use fp16 instead."
-        )
-    if resolution % 32 != 0:
-        raise ValueError(
-            f"resolution {resolution} is not divisible by 32 "
-            "(RFDETRSmall patch_size * num_windows)"
-        )
+    # One descriptor carries precision, IO boundary, opset and input
+    # shape. It also owns the two refusals that used to be inline here:
+    # INT8 without a calibration pass, and a resolution that is not
+    # divisible by RFDETRSmall's patch_size * num_windows.
+    target = target_for(
+        "rfdetr",
+        precision,
+        input_shape=(1, 3, resolution, resolution),
+        opset=opset,
+    )
+    conversion = plan(target)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     classes = _read_class_names(data_yaml)
@@ -175,14 +182,14 @@ def export(
     LOG.info("loading checkpoint %s", checkpoint)
     model = RFDETRSmall(pretrain_weights=str(checkpoint))
 
-    LOG.info("exporting to ONNX (shape=%dx%d, opset=%d, %s)",
-             resolution, resolution, opset, precision)
+    LOG.info("exporting to ONNX (shape=%dx%d, opset=%d) — %s",
+             resolution, resolution, target.opset, conversion.describe())
     with tempfile.TemporaryDirectory(prefix="rfdetr-export-") as tmp:
         produced = Path(
             model.export(
                 format="onnx",
                 output_dir=tmp,
-                opset_version=opset,
+                opset_version=target.opset,
                 shape=(resolution, resolution),
                 batch_size=1,
             )
@@ -198,11 +205,12 @@ def export(
         onnx_dst = output_dir / f"{model_name}.onnx"
         shutil.move(str(onnx_src), str(onnx_dst))
 
-    if precision == "fp16":
-        LOG.info("converting to fp16 (io kept fp32)")
-        _to_fp16(onnx_dst)
+    # The shared precision path — the single place a conversion runs.
+    # For fp32 it is a no-op; for fp16 it applies the graph conversion
+    # with the descriptor's explicit IO boundary.
+    convert(conversion, onnx_dst)
 
-    size_bytes = onnx_dst.stat().st_size
+    size_bytes = target.check_artifact_size(onnx_dst)
     LOG.info("artifact: %s (%.2f MB)", onnx_dst, size_bytes / 1024 / 1024)
 
     gz_dst = _gzip_alongside(onnx_dst)

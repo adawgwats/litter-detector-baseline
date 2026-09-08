@@ -39,9 +39,14 @@ from typing import Any
 
 import yaml
 
+from export.precision import convert, plan, target_for
+
 LOG = logging.getLogger("export.export_yolov8")
 
-MAX_ONNX_BYTES = 6 * 1024 * 1024  # 6 MB ceiling per spec §10 perf budget
+# 6 MB ceiling per spec §10 perf budget. Sourced from the target
+# descriptor so the budget is stated once, as data, next to the rest of
+# the target's identity.
+MAX_ONNX_BYTES = target_for("yolov8", "fp32").max_artifact_bytes
 DEFAULT_IMGSZ = 640
 DEFAULT_CONF = 0.25
 DEFAULT_IOU = 0.45
@@ -113,17 +118,18 @@ def _validate_version(version: str) -> None:
 
 
 def _precision_to_export_kwargs(precision: str) -> dict[str, Any]:
-    """Map the version's precision suffix to ultralytics export() kwargs."""
-    if precision == "fp32":
-        return {"half": False}
-    if precision == "fp16":
-        return {"half": True}
-    if precision == "int8":
-        raise NotImplementedError(
-            "INT8 export requires a calibration dataset; not wired for V1. "
-            "See spec §3 non-goals. Use fp16 instead."
-        )
-    raise ValueError(f"unknown precision {precision!r}")
+    """Map the version's precision suffix to ultralytics export() kwargs.
+
+    The mapping itself now lives in :mod:`export.precision`; this stays
+    as the name the rest of this module (and its tests) already use.
+    Note what the shared path makes visible that this function did not:
+    ``{'half': True}`` gives an artifact whose *inputs and outputs* are
+    fp16, because ultralytics halves the module before tracing. The
+    ``yolo11n-640-fp16`` descriptor now says so, and asking for an fp32
+    boundary from this mechanism is refused rather than silently
+    ignored.
+    """
+    return dict(plan(target_for("yolov8", precision)).backend_kwargs)
 
 
 def export(
@@ -146,7 +152,11 @@ def export(
 
     _validate_version(version)
     precision = version.rsplit("-", 1)[1]
-    export_kwargs = _precision_to_export_kwargs(precision)
+    # One descriptor carries precision, IO boundary, opset, input shape
+    # and size budget. Everything below reads from it.
+    target = target_for("yolov8", precision, input_shape=(1, 3, imgsz, imgsz))
+    conversion = plan(target)
+    LOG.info("target %s", conversion.describe())
 
     output_dir.mkdir(parents=True, exist_ok=True)
     classes = _read_class_names(data_yaml)
@@ -167,8 +177,8 @@ def export(
             imgsz=imgsz,
             simplify=True,
             dynamic=False,
-            opset=17,
-            **export_kwargs,
+            opset=target.opset,
+            **conversion.backend_kwargs,
         )
     )
     if not produced.exists():
@@ -177,14 +187,15 @@ def export(
     onnx_dst = output_dir / f"{model_name}.onnx"
     shutil.move(str(produced), str(onnx_dst))
 
-    size_bytes = onnx_dst.stat().st_size
+    # The shared precision path. A no-op for the two shipped YOLO
+    # targets — ultralytics has already applied the precision by the
+    # time the graph exists — but it is the same call the RF-DETR
+    # exporter makes, and it is what a graph-converted YOLO descriptor
+    # would run without any change here.
+    convert(conversion, onnx_dst)
+
+    size_bytes = target.check_artifact_size(onnx_dst)
     LOG.info("artifact: %s (%.2f MB)", onnx_dst, size_bytes / 1024 / 1024)
-    if size_bytes > MAX_ONNX_BYTES:
-        raise RuntimeError(
-            f"{onnx_dst} is {size_bytes / 1024 / 1024:.2f} MB; "
-            f"spec §10 caps at {MAX_ONNX_BYTES / 1024 / 1024:.0f} MB. "
-            f"Use a smaller precision or revisit imgsz."
-        )
 
     meta: dict[str, Any] = {
         "version": version,
