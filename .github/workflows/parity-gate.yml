@@ -1,0 +1,128 @@
+name: parity-gate
+
+# The release gate. Runs export.parity against a STORED BASELINE and exits
+# non-zero on regression.
+#
+# Two deliberate design decisions, both stated in reports/CONVERSION-REPORT.md
+# §5 before this workflow existed:
+#
+#   1. It gates on REGRESSION against a stored baseline, never on an absolute
+#      tolerance somebody guessed. Nobody has established what an acceptable
+#      absolute divergence is for this model, and inventing one in a YAML file
+#      would be the worst place to put that decision.
+#
+#   2. It FAILS CLOSED. The artifacts are 36-120 MB and live in S3, so this
+#      cannot be a per-commit job. When it cannot obtain them it FAILS rather
+#      than skipping — a gate that goes green because its inputs were missing
+#      is worse than no gate, since it produces a passing check with no
+#      evidence behind it.
+#
+# Not per-commit: the 200-image run is ~3.5 min per artifact pair on CPU.
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_key:
+        description: 'S3 key of the candidate artifact'
+        required: true
+        type: string
+      baseline_report:
+        description: 'Stored parity report to gate against'
+        required: true
+        default: reports/parity-rfdetr-v2.0.1-fp32-vs-int8-dyn.json
+        type: string
+  push:
+    tags: ['v*']
+
+env:
+  REFERENCE_KEY: litter-detector/v2.0.1-fp32/rfdetr-s-litter.onnx
+  MODELS_BUCKET: ${{ vars.MODELS_BUCKET }}
+  # The fixture corpus is an INPUT TO THE GATE, not an incidental. A parity
+  # number describes whatever images produced it, so the images are part of
+  # what has to be fetched and pinned.
+  FIXTURES_URI: ${{ vars.FIXTURES_URI }}
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e ".[dev,parity]"
+
+      - name: Require the credentials this gate depends on
+        run: |
+          set -euo pipefail
+          missing=0
+          [ -n "${MODELS_BUCKET:-}" ] || { echo "::error::MODELS_BUCKET repo variable is unset"; missing=1; }
+          [ -n "${{ secrets.AWS_OIDC_ROLE }}" ] || { echo "::error::AWS_OIDC_ROLE secret is unset"; missing=1; }
+          [ -n "${FIXTURES_URI:-}" ] || { echo "::error::FIXTURES_URI repo variable is unset — the gate has no images to measure on"; missing=1; }
+          if [ "$missing" -ne 0 ]; then
+            echo "::error::Failing rather than skipping. A green gate with no artifacts behind it is worse than no gate."
+            exit 1
+          fi
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          aws-region: us-east-1
+
+      - name: Fetch reference + candidate artifacts
+        run: |
+          set -euo pipefail
+          mkdir -p ci-artifacts
+          aws s3 cp "s3://${MODELS_BUCKET}/${REFERENCE_KEY}" ci-artifacts/reference.onnx
+          aws s3 cp "s3://${MODELS_BUCKET}/${REFERENCE_KEY%.onnx}.meta.json" ci-artifacts/reference.meta.json
+          aws s3 cp "s3://${MODELS_BUCKET}/${{ inputs.candidate_key }}" ci-artifacts/candidate.onnx
+          ls -l ci-artifacts
+
+      # The committed manifest holds absolute paths from the machine that
+      # generated it and will not resolve here. Regenerate it from the corpus
+      # with the same seed — build_parity_fixtures.py is deterministic, so
+      # seed 0 selects the same 200 frames it always has.
+      - name: Fetch fixture corpus and regenerate the manifest
+        run: |
+          set -euo pipefail
+          mkdir -p ci-corpus
+          aws s3 sync "${FIXTURES_URI}" ci-corpus --only-show-errors
+          python scripts/build_parity_fixtures.py \
+            --corpus ci-corpus --pairs 100 --seed 0 \
+            --out ci-artifacts/fixtures-ci.txt
+          n=$(grep -vc '^#' ci-artifacts/fixtures-ci.txt)
+          echo "manifest lists $n images"
+          if [ "$n" -ne 200 ]; then
+            echo "::error::expected 200 fixtures, got $n — the corpus is not the one this baseline was measured on"
+            exit 1
+          fi
+
+      # onnx.checker accepts graphs ONNX Runtime refuses. This is the check
+      # that would have caught the fp16 defect on the day it was written.
+      - name: Both artifacts build an ORT session
+        run: |
+          python - <<'PY'
+          from export.fp16_repair import validate_loadable
+          for p in ("ci-artifacts/reference.onnx", "ci-artifacts/candidate.onnx"):
+              validate_loadable(p)
+              print(f"ok  session builds: {p}")
+          PY
+
+      - name: Parity, gated on regression against the stored baseline
+        run: |
+          python -m export.parity \
+            --a ci-artifacts/reference.onnx \
+            --b ci-artifacts/candidate.onnx \
+            --meta ci-artifacts/reference.meta.json \
+            --fixtures ci-artifacts/fixtures-ci.txt \
+            --baseline "${{ inputs.baseline_report || 'reports/parity-rfdetr-v2.0.1-fp32-vs-int8-dyn.json' }}" \
+            --report-json parity-result.json
+
+      - name: Publish the report whether it passed or failed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-report
+          path: parity-result.json

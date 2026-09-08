@@ -6,6 +6,7 @@ elsewhere and run in CI with the heavy deps installed.
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from litter_detector_baseline import Detection, DetectorConfig
 from litter_detector_baseline.postprocess import yolov8_decode
@@ -106,7 +107,9 @@ def test_yolov8_decode_single_high_confidence() -> None:
     assert len(detections) == 1
     det = detections[0]
     assert det.class_name == "bottle"
-    assert det.score == 0.9
+    # approx, not ==: 0.9 does not survive a float32 round-trip (it comes
+    # back 0.8999999761581421), so exact equality fails on a correct decode.
+    assert det.score == pytest.approx(0.9, rel=1e-6)
     # Box should be 270, 270, 370, 370
     assert det.x1 == 270.0
     assert det.y1 == 270.0
@@ -133,5 +136,5 @@ def test_yolov8_decode_nms_suppresses_duplicate() -> None:
         original_size=(640, 640),
     )
     assert len(detections) == 2
-    assert detections[0].score == 0.9
-    assert detections[1].score == 0.5
+    assert detections[0].score == pytest.approx(0.9, rel=1e-6)
+    assert detections[1].score == pytest.approx(0.5, rel=1e-6)

@@ -1,0 +1,65 @@
+name: ci
+
+# Everything that can run WITHOUT a 120 MB model artifact. The parity gate
+# itself needs the artifacts and lives in parity-gate.yml, which fails closed
+# rather than skipping when it cannot get them.
+on:
+  push:
+    branches: [main, 'feat/**']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e ".[dev,parity]"
+
+      - name: Unit tests
+        run: pytest tests/ -q
+
+      # A check that never fires in a test is a comment, not a gate. These are
+      # the refusals this repo relies on; assert each is actually asserted
+      # somewhere, so deleting the assertion turns CI red instead of quietly
+      # leaving a comment behind.
+      - name: Prove the refusals are asserted
+        run: |
+          set -euo pipefail
+          fail=0
+          for k in PrecisionMismatchError VersionCollisionError MissingParityError ImmutableRecordError; do
+            n=$(grep -rc "pytest.raises($k" tests/ | awk -F: '{s+=$2} END{print s+0}')
+            echo "$k -> $n pytest.raises"
+            [ "$n" -gt 0 ] || { echo "::error::no pytest.raises for $k"; fail=1; }
+          done
+          n=$(grep -rc "_check_class_alignment" tests/test_export_rfdetr.py | awk -F: '{print $NF+0}')
+          echo "_check_class_alignment -> $n references"
+          [ "$n" -gt 0 ] || { echo "::error::class-order gate has no test"; fail=1; }
+          exit $fail
+
+      # Recomputes record_id from the identity block. Catches a hand-edited
+      # record. Deliberately does NOT hash the artifacts — they are 36-120 MB
+      # and live in S3, so that check belongs to the release gate, not here.
+      - name: Registry records match their own digests
+        run: |
+          python - <<'PY'
+          import glob, hashlib, json, sys
+          from export.registry import canonical_bytes
+          bad = []
+          files = sorted(glob.glob("registry/*.json"))
+          for f in files:
+              rec = json.load(open(f))
+              got = hashlib.sha256(canonical_bytes(rec["identity"])).hexdigest()
+              if got != rec["recordId"]:
+                  bad.append((f, rec["recordId"], got))
+          for f, want, got in bad:
+              print(f"::error file={f}::recordId {want[:12]} but identity hashes to {got[:12]}")
+          if not files:
+              print("::error::no registry records found")
+              sys.exit(1)
+          print(f"{len(files)} registry records verified")
+          sys.exit(1 if bad else 0)
+          PY
