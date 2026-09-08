@@ -24,7 +24,7 @@ python -m venv C:\tmp\venv-rfdetr
 C:\tmp\venv-rfdetr\Scripts\Activate.ps1
 
 # CUDA torch FIRST so rfdetr doesn't resolve the CPU wheel.
-# cu124 wheels cover the RTX 4090 (sm_89).
+# cu124 wheels cover the RTX 4070 (sm_89, Ada).
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 
 # Pinned versions (API facts in the V2 scripts were verified against
@@ -98,7 +98,7 @@ Outputs in `C:\tmp\runs\v2-rfdetr-s-<UTC>\`:
 `checkpoint_best_total.pth` (use this one), `training_config.json`,
 `energy_receipt.json`. Defaults follow the rfdetr docs: total batch
 16 (4 x 4 accumulation), lr 1e-4, 100 epochs; RF-DETR Small is the
-Apache-2.0 tier. Budget roughly a day of 4090 wall time at TACO scale;
+Apache-2.0 tier. Budget roughly a day of RTX 4070 wall time at TACO scale;
 the energy receipt records what it actually cost.
 
 ## 4. Eval — both models, both granularities
